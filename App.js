@@ -1,101 +1,157 @@
-import React from 'react';
-import { StyleSheet, Platform, Image, Text, View, ScrollView } from 'react-native';
+import '@babel/polyfill'
+import React from 'react'
+import AsyncStorage from '@react-native-community/async-storage';
+import { createAppContainer } from 'react-navigation'
 
-import firebase from 'react-native-firebase';
+import { createStackNavigator } from 'react-navigation-stack';
+import NavigationService from './NavigationService'
+import { ApolloClient } from 'apollo-client'
+import { createHttpLink } from 'apollo-link-http'
+import { setContext } from 'apollo-link-context'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { ApolloProvider } from 'react-apollo'
+import firebase from 'react-native-firebase'
+import type { Notification, NotificationOpen } from 'react-native-firebase'
+import { fromTop, fadeIn } from 'react-navigation-transitions'
 
-export default class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
-  }
+import SignIn from './screens/SignIn'
+import SignOut from './screens/SignOut'
+import CurrentRecommendations from './screens/CurrentRecommendations'
+import Article from './screens/Article'
+import NewQuestionModal from './components/NewQuestionModal'
+import Welcome from './screens/Welcome'
+import ChooseLanguage from './screens/ChooseLanguage'
 
-  async componentDidMount() {
-    // TODO: You: Do firebase things
-    // const { user } = await firebase.auth().signInAnonymously();
-    // console.warn('User -> ', user.toJSON());
 
-    // await firebase.analytics().logEvent('foo', { bar: '123'});
-  }
+const uri = 'https://us-central1-langolearn.cloudfunctions.net/api'
 
-  render() {
-    return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Image source={require('./assets/ReactNativeFirebase.png')} style={[styles.logo]}/>
-          <Text style={styles.welcome}>
-            Welcome to {'\n'} React Native Firebase
-          </Text>
-          <Text style={styles.instructions}>
-            To get started, edit App.js
-          </Text>
-          {Platform.OS === 'ios' ? (
-            <Text style={styles.instructions}>
-              Press Cmd+R to reload,{'\n'}
-              Cmd+D or shake for dev menu
-            </Text>
-          ) : (
-            <Text style={styles.instructions}>
-              Double tap R on your keyboard to reload,{'\n'}
-              Cmd+M or shake for dev menu
-            </Text>
-          )}
-          <View style={styles.modules}>
-            <Text style={styles.modulesHeader}>The following Firebase modules are pre-installed:</Text>
-            {firebase.admob.nativeModuleExists && <Text style={styles.module}>admob()</Text>}
-            {firebase.analytics.nativeModuleExists && <Text style={styles.module}>analytics()</Text>}
-            {firebase.auth.nativeModuleExists && <Text style={styles.module}>auth()</Text>}
-            {firebase.config.nativeModuleExists && <Text style={styles.module}>config()</Text>}
-            {firebase.crashlytics.nativeModuleExists && <Text style={styles.module}>crashlytics()</Text>}
-            {firebase.database.nativeModuleExists && <Text style={styles.module}>database()</Text>}
-            {firebase.firestore.nativeModuleExists && <Text style={styles.module}>firestore()</Text>}
-            {firebase.functions.nativeModuleExists && <Text style={styles.module}>functions()</Text>}
-            {firebase.iid.nativeModuleExists && <Text style={styles.module}>iid()</Text>}
-            {firebase.links.nativeModuleExists && <Text style={styles.module}>links()</Text>}
-            {firebase.messaging.nativeModuleExists && <Text style={styles.module}>messaging()</Text>}
-            {firebase.notifications.nativeModuleExists && <Text style={styles.module}>notifications()</Text>}
-            {firebase.perf.nativeModuleExists && <Text style={styles.module}>perf()</Text>}
-            {firebase.storage.nativeModuleExists && <Text style={styles.module}>storage()</Text>}
-          </View>
-        </View>
-      </ScrollView>
-    );
-  }
+const getToken = async () => {
+  const token = await AsyncStorage.getItem('auth_token')
+  return token
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  logo: {
-    height: 120,
-    marginBottom: 16,
-    marginTop: 64,
-    padding: 10,
-    width: 135,
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  modules: {
-    margin: 20,
-  },
-  modulesHeader: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  module: {
-    fontSize: 14,
-    marginTop: 4,
-    textAlign: 'center',
+const httpLink = createHttpLink({uri})
+
+const authLink = setContext( async (_, { headers }) => {
+  const token = await getToken()
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
   }
-});
+})
+
+const link = authLink.concat(httpLink)
+const cache = new InMemoryCache()
+
+const client = new ApolloClient({
+  link,
+  cache
+})
+
+const MainStack = createStackNavigator(
+  {
+    SignIn: SignIn,
+    SignOut: SignOut,
+    CurrentRecommendations: CurrentRecommendations,
+    Welcome: Welcome,
+    Article: Article,
+    ChooseLanguage: ChooseLanguage
+  },
+  {
+    initialRouteName: "SignIn",
+    transitionConfig: () => fadeIn()
+  }
+)
+
+
+const RootStack = createStackNavigator(
+  {
+    Main: {
+      screen: MainStack,
+    },
+    MyModal: {
+      screen: NewQuestionModal,
+    },
+  },
+  {
+    mode: 'modal',
+    headerMode: 'none',
+    transparentCard:true,
+    transitionConfig: () => fromTop()
+  }
+)
+
+const Container = createAppContainer(RootStack)
+
+export default class App extends React.Component {
+
+  state = {
+    isVisible:false,
+    questionId: ''
+  }
+
+  componentDidMount = async () => {
+
+    const enabled = await firebase.messaging().hasPermission()
+        if (enabled) {
+
+        } else {
+            // user doesn't have permission
+            try {
+                await firebase.messaging().requestPermission()
+                // User has authorised
+            } catch (error) {
+                // User has rejected permissions
+                alert('No permission for notification')
+            }
+        }
+
+
+        this.notificationDisplayedListener = firebase.notifications().onNotificationDisplayed((notification: Notification) => {
+          NavigationService.navigate('MyModal',{ questionId1: notification.data.questionId })
+        })
+        this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
+          NavigationService.navigate('MyModal',{ questionId1: notification.data.questionId, course: notification.data.course, institution: notification.data.institution, testNumber: notification.data.testNumber, subject: notification.data.subject })
+        })
+
+        this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen: NotificationOpen) => {
+        // Get the action triggered by the notification being opened
+            const action = notificationOpen.action
+            // Get information about the notification that was opened
+            const notification: Notification = notificationOpen.notification
+            NavigationService.navigate('CreateQuestion1',{ questionId1: notification.data.questionId })
+
+        })
+
+        const notificationOpen: NotificationOpen = await firebase.notifications().getInitialNotification()
+         if (notificationOpen) {
+             // App was opened by a notification
+             // Get the action triggered by the notification being opened
+             const action = notificationOpen.action
+             // Get information about the notification that was opened
+             const notification: Notification = notificationOpen.notification
+             NavigationService.navigate('CreateQuestion1',{ questionId1: notification.data.questionId })
+
+         }
+      }
+
+      componentWillUnmount() {
+          this.notificationDisplayedListener ()
+          this.notificationListener()
+          this.notificationOpenedListener()
+      }
+
+ render() {
+    return (
+      <ApolloProvider client={client}>
+      <Container
+        ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef)
+        }}
+      />
+      </ApolloProvider>
+    )
+  }
+}
