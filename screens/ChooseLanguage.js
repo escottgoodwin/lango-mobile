@@ -76,7 +76,6 @@ class ChooseLanguage extends React.Component {
         backgroundColor:'#F4F3EF',
         padding:'5%'}}>
           
-       {user !== null && 
         <>       
         <View>
           <Text>
@@ -91,7 +90,6 @@ class ChooseLanguage extends React.Component {
         </View>
 
         <ScrollView>
-       
         { user.en_rec && <LangChoice lang='en' language='English' navigation={navigation} /> }
 
         { user.fr_rec && <LangChoice lang='fr' language='French' navigation={navigation} /> }
@@ -101,7 +99,6 @@ class ChooseLanguage extends React.Component {
         { user.es_rec && <LangChoice lang='es' language='Spanish'  navigation={navigation} /> }
         </ScrollView>
         </>
-        }
 
         <View style={{padding:15,alignItems:'center'}}>
           <Button style={{backgroundColor:'#3A7891'}}  onPress={() => this.signOut(navigation)} title="Sign Out" >

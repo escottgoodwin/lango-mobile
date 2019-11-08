@@ -1,25 +1,32 @@
 import React from 'react'
-import { StyleSheet, Image, View, ScrollView} from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage';
-import { Query, } from "react-apollo"
+import { View, ScrollView, Modal } from 'react-native'
+import { Query, Mutation } from "react-apollo"
 import moment from 'moment'
 import Tts from 'react-native-tts';
-import { Text, Button, Icon } from 'native-base';
+import { Button, Icon, Text, Toast } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid'
 
-import  { ARTICLE_QUERY } from '../ApolloQueries'
+import  { ARTICLE_QUERY, TRANSLATION_MUTATION } from '../ApolloQueries'
+
+import Loading from './Loading'
+import SelectableText from './SelectableText'
 
 class Article extends React.Component {
 
     state = {
-      user: '',
+      user: null,
       lang:'',
       graphQLError: '',
       isVisibleGraph:false,
       networkError:'',
       isVisibleNet:false,
       playing:false,
-      started:false
+      started:false,
+      modalVisible: false,
+      orig_text:'', 
+      trans_text:'',
+      errorMsg:'',
+      selText:''
     }
 
   static navigationOptions = {
@@ -28,9 +35,7 @@ class Article extends React.Component {
   }
 
   componentDidMount = async () => {
-    const user1 = await AsyncStorage.getItem('user')
-    const user = JSON.parse(user1)
-    this.setState({user})
+
     const lang = this.props.navigation.getParam('lang', 'NO-ID')
     const voiceLang = lang + '-' + lang.toUpperCase()
   
@@ -66,10 +71,6 @@ class Article extends React.Component {
     this.setState({playing:false, started:false})
   }
 
-  stop = rate => {
-    Tts.stop()
-  }
-
   finished = () => {
     Tts.stop()
     this.setState({playing:false})
@@ -82,28 +83,50 @@ class Article extends React.Component {
     Tts.removeEventListener('tts-cancel', (event) => this.setState({playing:false}));
   }
 
-
  render() {
 
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const art_id = navigation.getParam('art_id', 'NO-ID')
-  const { playable, playing, started } = this.state
+  const { playing, started, modalVisible, orig_text, trans_text, errorMsg, selText } = this.state
 
     return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       
-
         <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
             {({ loading, error, data }) => {
-                if (loading) return <View><Text>Loading...</Text></View>
+                if (loading) return <Loading />
                 if (error) return <View><Text>{JSON.stringify(error)}</Text></View>
 
-                const { article, title, link, date, translations } = data.article
+                const { article, title, date, translations } = data.article
               
             return (
               <>
-              <ScrollView>
+              <Modal
+                animationType="slide"
+                transparent={false}
+                visible={modalVisible}
+                onRequestClose={() => {
+                  Alert.alert('Modal has been closed.');
+                }}>
+                <View style={{flex:1, padding:20, backgroundColor:'#F4F3EF'}}>
+                  <View style={{marginTop:50}}>
+                  <Text style={{display: 'flex', fontSize:24, alignItems: 'center'}}>Translations</Text>
+                    
+                    {translations.map((t,i) => 
+                    <View key={i} style={{margin: 20}}>
+                      <Text style={{fontSize:22,color:'green'}}>{t.orig_text}</Text> 
+                      <Text style={{fontSize:22,color:'blue'}}>{t.trans_text}</Text>
+                    </View>
+                      )}
+                  </View>
+                  <Button onPress={() => this.setState({modalVisible:false})}>
+                    <Text>Close</Text>
+                  </Button>
+                </View>
+              </Modal>
+
+              
               <View>
                 <Text>
                   {moment(date).format('MMMM Do YYYY')}
@@ -111,29 +134,96 @@ class Article extends React.Component {
               </View>
 
               <View>
-                <Text style={{fontSize:24,marginBottom:3,color:'#3A7891'}}>
+                <Text style={{fontSize:24,marginBottom:10,color:'#3A7891'}}>
                   {title}
                 </Text>
               </View>
+
+              <View style={{height:50}}>
+
+                {selText.length>0 && 
+                <Grid>
+                  <Row>
+                    <Col size={70}>
+                    <Text style={{fontSize:22,color:'green'}}>{selText}</Text>
+                    </Col>
+
+                    <Col size={30}>
+                    <Mutation
+                      mutation={TRANSLATION_MUTATION}
+                      variables={{ 
+                        originalText: selText,
+                        artId: art_id,
+                        lang
+                      }}
+                      onCompleted={data => this._confirm(data)}
+                      onError={error => this._error (error)}
+                      refetchQueries={() => { return [{
+                        query: ARTICLE_QUERY,
+                        variables: { artId: art_id, lang }}]
+                      }}
+                    >
+                    {mutation => (
+  
+                      <Button small style={{backgroundColor:'blue'}} onPress={mutation}>
+                        <Text>Translate</Text>
+                      </Button>
+                      )}
+                    </Mutation>
+                    
+                    </Col>
+                  </Row>
+                </Grid>
+                    
+                    
+                }
+
+              {orig_text.length>0 &&
+                <Grid>
+
+                  <Row>
+                    <Col>
+                       <Text style={{fontSize:22, color:'green'}}>{orig_text}</Text> 
+                    </Col>
+
+                    <Col>
+                      <Text style={{fontSize:22, color:'blue'}}>{trans_text}</Text>
+                    </Col>
+                  </Row>
+                </Grid>
+              }
+                 
+                {errorMsg.length>0 && <Text style={{fontSize:22, color:'red'}}>{errorMsg}</Text>} 
               
-              
-                <Text style={{fontSize:22}}>
-                  {article}
-                </Text>
+              </View>
+
+              <ScrollView>
+
+              <SelectableText
+                selectable={true}
+                menuItems={["Select"]}
+                onSelection={({ eventType, content, selectionStart, selectionEnd }) => {
+                  this.setState({selText:content,orig_text:'',trans_text:''})
+                }}
+                style={{fontSize:22}}
+                value={article}
+              />
+             
+                          
               </ScrollView>
 
-              <Grid>
+              <Grid style={{margin:10}}>
         
               <Row>
-                <Col>
+              <Col>
               {started ? 
     
-              <Button style={{backgroundColor: playing ? 'red' : 'green'}}  onPress={() => playing ? this.pause() : this.resume()} title="Pause" >
-                  {playing ?  <Icon  name="pause" /> :  <Icon  name="play" />}
-                </Button>
+              <Button style={{backgroundColor: playing ? '#dc3545' : '#28a745'}}  onPress={() => playing ? this.pause() : this.resume()} title="Pause" >
+                {playing ?  <Icon  type="FontAwesome" name="pause" /> :  <Icon  type="FontAwesome" name="play" />}
+              </Button>
                 :
-              <Button style={{backgroundColor:'green'}}  onPress={() => this.play(article)} title="Play" >
-                <Icon name="play" />
+              <Button style={{backgroundColor:'#28a745'}}  onPress={() => this.play(article)} title="Play" >
+                <Icon type="FontAwesome" name="play" />
               </Button>
               }
                
@@ -162,6 +252,13 @@ class Article extends React.Component {
                   <Text style={{color:'blue'}}>1/2X</Text>
                 </Button>
                 </Col>
+             
+
+                <Col>
+                <Button onPress={() => this.setState({modalVisible:true})} title="1X" >
+                  <Icon type="FontAwesome" name="language" />
+                </Button>
+                </Col>
                 </Row>
               
               </Grid>
@@ -177,15 +274,21 @@ class Article extends React.Component {
 
   }
 
+  _confirm = (data) => {
+    console.log(data)
+    const { orig_text, trans_text } = data.translation
+     this.setState({orig_text, trans_text})
+     this.setState({selText:''})
+     this.setState({errorMsg:''})
+    }
+
   _error = async error => {
 
-      const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-      this.setState({ isVisibleGraph: true, graphQLError: gerrorMessage})
-
-      error.networkError &&
-        this.setState({ isVisibleNet: true, networkError: error.networkError.message})
+      console.log(error)
 
   }
+
+  
 
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Image, Text, View, ScrollView, Button, TouchableOpacity, FlatList } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import { Query, } from "react-apollo"
 import { container } from '../css'
@@ -8,8 +8,10 @@ import firebase from 'react-native-firebase'
 import axios from 'axios'
 import { Flag } from 'react-native-svg-flagkit'
 import ArtRec from '../components/ArtRec'
-
+import { Col, Row, Grid } from 'react-native-easy-grid'
 import  { LOGOUT_MUTATION, ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
+
+import Loading from './Loading'
 
   const removeToken = async () => {
     await AsyncStorage.removeItem('user')
@@ -81,25 +83,38 @@ class HistoryRecommendations extends React.Component {
               fetchPolicy={'cache-and-network'}
               variables={{ lang, date }}  >
             {({ loading, error, data }) => {
-              if (loading) return <View><Text>Loading...</Text></View>
+              if (loading) return <Loading />
               if (error) return <View><Text>{JSON.stringify(error)}</Text></View>
 
             const { articleRecommendationsHistory } = data
  
             return (
               <>
-              <View>
-                <Flag id={flag} size={0.2} /> 
-                <Text style={{fontSize:18}}>
-                  {moment(date).format('MMMM Do YYYY')}
-                </Text>
-              </View>
-              <View>
-                <Text style={{fontSize:18}}>
-                  {articleRecommendationsHistory.length} Recommendations
-                </Text>
-              </View>
+              
+                <Grid>
+                  <Row>
+                    <Col size={20}>
+                      <Flag id={flag} size={0.25} /> 
+                    </Col>
 
+                    <Col size={80}>
+                    <View>
+                    <Text style={{fontSize:14}}>
+                      {moment(date).format('MMMM Do YYYY')}
+                    </Text>
+                    </View>
+
+                    <View>
+                    <Text style={{fontSize:18}}>
+                      {articleRecommendationsHistory.length} Recommendations
+                    </Text>
+                  </View>
+                    </Col>
+
+                  </Row>
+
+                </Grid>
+                
               <FlatList
                 data={articleRecommendationsHistory}
                 renderItem={

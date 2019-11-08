@@ -194,6 +194,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@astrocoders_react-native-selectable-text')
     implementation project(':react-native-twitter-signin')
     implementation project(':react-native-fbsdk')
     implementation project(':react-native-selectable-text')

@@ -120,8 +120,8 @@ class SignIn extends React.Component {
             const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
             processLogin(firebaseUserCredential.user.uid,this.props)
             console.warn(JSON.stringify(firebaseUserCredential.user.toJSON()))
-          } catch (e) {
-            console.error(e);
+          } catch (error) {
+            this.setState({error})
           }
         }
 
@@ -132,8 +132,7 @@ class SignIn extends React.Component {
             const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
             const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
             processLogin(firebaseUserCredential.user.uid,this.props)
-          } catch (e) {
-            console.error(error);
+          } catch (error) {
             this.setState({error})
 
           }
@@ -154,7 +153,6 @@ class SignIn extends React.Component {
           } catch (e) {
             console.error(e);
           }
-          
           
         }
 

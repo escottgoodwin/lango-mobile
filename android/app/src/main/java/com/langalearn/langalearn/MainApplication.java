@@ -8,6 +8,7 @@ import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
 import com.facebook.react.bridge.JavaScriptExecutorFactory;
 
 import com.facebook.react.ReactApplication;
+import com.astrocoders.selectabletext.RNSelectableTextPackage;
 import com.goldenowl.twittersignin.TwitterSigninPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import fi.msand.RNSelectableTextPackage;

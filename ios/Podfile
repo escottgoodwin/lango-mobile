@@ -57,6 +57,8 @@ target 'langalearn' do
 
   pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
 
+  pod 'react-native-selectable-text', :path => '../node_modules/@astrocoders/react-native-selectable-text'
+
   target 'langalearnTests' do
     inherit! :search_paths
     # Pods for testing
