@@ -18,7 +18,7 @@ import  { LOGOUT_MUTATION, ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
     return 
   }
 
-class CurrentRecommendations extends React.Component {
+class PlaylistRecommendations extends React.Component {
 
     state = {
       user: '',
@@ -30,7 +30,7 @@ class CurrentRecommendations extends React.Component {
     }
 
   static navigationOptions = {
-    title: 'Current Recommendations',
+    title: 'Playlist',
     headerLeft: null
   }
 
@@ -65,16 +65,15 @@ class CurrentRecommendations extends React.Component {
     const user1 = await AsyncStorage.getItem('user')
     const user = JSON.parse(user1)
     this.setState({user})
-
-    const now = new Date()
-    this.setState({date:now})
   }
 
  render() {
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
-  const { user, date, graphQLError, networkError, isVisibleNet, isVisibleGraph } = this.state
+  const language = navigation.getParam('language', 'NO-ID')
+  const { user, graphQLError, networkError, isVisibleNet, isVisibleGraph } = this.state
   const flag = lang.toUpperCase()
+  const date = new Date()
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       <ScrollView>
@@ -136,4 +135,4 @@ const styles = StyleSheet.create({
   container
 })
 
-export default CurrentRecommendations
+export default PlaylistRecommendations

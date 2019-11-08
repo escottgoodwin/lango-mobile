@@ -1,9 +1,11 @@
 import React from 'react'
-import { StyleSheet, Image, Text, View, ScrollView, Button } from 'react-native'
+import { StyleSheet, Image, View, ScrollView} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import { Query, } from "react-apollo"
-import { container } from '../css'
 import moment from 'moment'
+import Tts from 'react-native-tts';
+import { Text, Button, Icon } from 'native-base';
+import { Col, Row, Grid } from 'react-native-easy-grid'
 
 import  { ARTICLE_QUERY } from '../ApolloQueries'
 
@@ -16,6 +18,8 @@ class Article extends React.Component {
       isVisibleGraph:false,
       networkError:'',
       isVisibleNet:false,
+      playing:false,
+      started:false
     }
 
   static navigationOptions = {
@@ -27,17 +31,68 @@ class Article extends React.Component {
     const user1 = await AsyncStorage.getItem('user')
     const user = JSON.parse(user1)
     this.setState({user})
+    const lang = this.props.navigation.getParam('lang', 'NO-ID')
+    const voiceLang = lang + '-' + lang.toUpperCase()
+  
+    Tts.getInitStatus().then(() => {
+      this.setState({playable:true})
+      Tts.setDefaultLanguage(voiceLang)
+    })
+
+    Tts.addEventListener('tts-start', (event) => this.setState({playing:true}));
+    Tts.addEventListener('tts-finish', (event) => this.setState({playing:false}));
+    Tts.addEventListener('tts-cancel', (event) => this.setState({playing:false}));
+    
   }
+
+  play = article => {
+    Tts.speak(article)
+    this.setState({started:true})
+  }
+
+  pause = () => {
+    Tts.pause()
+    this.setState({playing:false})
+  }
+
+  resume = () => {
+    Tts.resume()
+    this.setState({playing:true})
+  }
+
+  changeSpeed = rate => {
+    Tts.stop()
+    Tts.setDefaultRate(rate)
+    this.setState({playing:false, started:false})
+  }
+
+  stop = rate => {
+    Tts.stop()
+  }
+
+  finished = () => {
+    Tts.stop()
+    this.setState({playing:false})
+  }
+
+  componentWillUnmount(){
+    Tts.stop()
+    Tts.removeEventListener('tts-start', (event) => this.setState({playing:true}));
+    Tts.removeEventListener('tts-finish', (event) => this.finished());
+    Tts.removeEventListener('tts-cancel', (event) => this.setState({playing:false}));
+  }
+
 
  render() {
 
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const art_id = navigation.getParam('art_id', 'NO-ID')
-  console.log(art_id, lang)
+  const { playable, playing, started } = this.state
+
     return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
-      <ScrollView>
+      
 
         <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
             {({ loading, error, data }) => {
@@ -48,6 +103,7 @@ class Article extends React.Component {
               
             return (
               <>
+              <ScrollView>
               <View>
                 <Text>
                   {moment(date).format('MMMM Do YYYY')}
@@ -60,17 +116,62 @@ class Article extends React.Component {
                 </Text>
               </View>
               
-              <View>
-                <Text style={{fontSize:18}}>
+              
+                <Text style={{fontSize:22}}>
                   {article}
                 </Text>
-              </View>
+              </ScrollView>
+
+              <Grid>
+        
+              <Row>
+                <Col>
+              {started ? 
+    
+              <Button style={{backgroundColor: playing ? 'red' : 'green'}}  onPress={() => playing ? this.pause() : this.resume()} title="Pause" >
+                  {playing ?  <Icon  name="pause" /> :  <Icon  name="play" />}
+                </Button>
+                :
+              <Button style={{backgroundColor:'green'}}  onPress={() => this.play(article)} title="Play" >
+                <Icon name="play" />
+              </Button>
+              }
+               
+              </Col>
+
+              <Col>
+                <Button bordered onPress={() => this.changeSpeed(0.50)} title="1X" >
+                  <Text style={{color:'blue'}}>1X</Text>
+                </Button>
+                </Col>
+                
+                <Col>
+                <Button bordered  onPress={() => this.changeSpeed(0.375)} title="1X" >
+                  <Text style={{color:'blue'}}>3/4X</Text>
+                </Button>
+                </Col>
+
+                <Col>
+                <Button bordered  onPress={() => this.changeSpeed(0.33)} title="1X" >
+                  <Text style={{color:'blue'}}>2/3X</Text>
+                </Button>
+                </Col>
+
+                <Col>
+                <Button bordered onPress={() => this.changeSpeed(0.25)} title="1X" >
+                  <Text style={{color:'blue'}}>1/2X</Text>
+                </Button>
+                </Col>
+                </Row>
+              
+              </Grid>
+   
               </>
               )
             }}
          </Query>
   
-      </ScrollView>
+      
       </View>
     )
 

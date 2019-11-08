@@ -53,6 +53,10 @@ target 'langalearn' do
 
   pod 'TextToSpeech', :path => '../node_modules/react-native-tts'
 
+  pod 'GoogleSignIn', '~> 5.0.0'
+
+  pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
+
   target 'langalearnTests' do
     inherit! :search_paths
     # Pods for testing

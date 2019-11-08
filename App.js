@@ -22,6 +22,12 @@ import NewQuestionModal from './components/NewQuestionModal'
 import Welcome from './screens/Welcome'
 import ChooseLanguage from './screens/ChooseLanguage'
 
+import HistoryRecommendations from './screens/HistoryRecommendations'
+
+import PlaylistRecommendations from './screens/PlaylistRecommendations'
+
+import ChooseHistory from './screens/ChooseHistory'
+
 
 const uri = 'https://us-central1-langolearn.cloudfunctions.net/api'
 
@@ -57,7 +63,10 @@ const MainStack = createStackNavigator(
     CurrentRecommendations: CurrentRecommendations,
     Welcome: Welcome,
     Article: Article,
-    ChooseLanguage: ChooseLanguage
+    ChooseLanguage: ChooseLanguage,
+    HistoryRecommendations: HistoryRecommendations,
+    PlaylistRecommendations: PlaylistRecommendations,
+    ChooseHistory: ChooseHistory
   },
   {
     initialRouteName: "SignIn",

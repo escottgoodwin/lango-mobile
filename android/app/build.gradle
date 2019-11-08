@@ -194,6 +194,9 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-twitter-signin')
+    implementation project(':react-native-fbsdk')
+    implementation project(':react-native-selectable-text')
     implementation project(':react-native-tts')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-gesture-handler')

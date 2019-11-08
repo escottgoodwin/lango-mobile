@@ -2,21 +2,21 @@ import React from 'react'
 import TouchID from 'react-native-touch-id';
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-community/async-storage';
-import { KeyboardAvoidingView, StyleSheet, Image,  View, TextInput, ImageBackground, Alert } from 'react-native'
-import { Mutation, withApollo } from "react-apollo"
-import { execute, makePromise } from 'apollo-link'
-import fetch from 'node-fetch';
-import {HttpLink} from 'apollo-link-http'
+import { TouchableOpacity, KeyboardAvoidingView, StyleSheet, ImageBackground } from 'react-native'
+import { withApollo } from "react-apollo"
 import firebase from 'react-native-firebase'
+import { AccessToken, LoginManager } from 'react-native-fbsdk';
+import { GoogleSignin, statusCodes } from '@react-native-community/google-signin'
+
 import axios from 'axios'
 import { container, input, logo } from '../css'
 
-import { Container, Header, Content, Card, CardItem, Body, Text, Button, Input, Icon } from 'native-base';
+import { Card, CardItem, Text, Button, Input, Icon } from 'native-base';
 
 import {LOGIN_MUTATION} from '../ApolloQueries'
 
-import ButtonColor from '../components/ButtonColor'
 import ErrorMutation from '../components/ErrorMutation'
+
 
 const processLogin = async (uid,props) => {
   const newToken = await AsyncStorage.setItem('uid', uid)
@@ -32,17 +32,13 @@ const processLogin = async (uid,props) => {
       const { token, user } = result.data.data.login
       const newToken = AsyncStorage.setItem('auth_token', token)
       const user3 = AsyncStorage.setItem('user', JSON.stringify(user))
-      
   })
 
 }
 
-const bkgd = require('../assets/loginmap1.jpg')
-
 class SignIn extends React.Component {
 
   componentDidMount = async () => {
-        console.log('mounted')
         //const fcmToken = await firebase.messaging().getToken()
         //const credentials =  await Keychain.getGenericPassword()
         //if (!credentials.username) {
@@ -98,6 +94,71 @@ class SignIn extends React.Component {
           })
         }
 
+         facebookLogin =  async () => {
+          try {
+            const result = await LoginManager.loginWithPermissions(['public_profile']);
+            console.log(result)
+            if (result.isCancelled) {
+              // handle this however suites the flow of your app
+              throw new Error('User cancelled request'); 
+            }
+        
+            console.log(`Login success with permissions: ${result.grantedPermissions.toString()}`);
+        
+            // get the access token
+            const data = await AccessToken.getCurrentAccessToken();
+        
+            if (!data) {
+              // handle this however suites the flow of your app
+              throw new Error('Something went wrong obtaining the users access token');
+            }
+        
+            // create a new firebase credential with the token
+            const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+        
+            // login with credential
+            const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
+            processLogin(firebaseUserCredential.user.uid,this.props)
+            console.warn(JSON.stringify(firebaseUserCredential.user.toJSON()))
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        googleLogin = async () => {
+          try {
+            await GoogleSignin.configure();
+            const data = await GoogleSignin.signIn();
+            const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
+            const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
+            processLogin(firebaseUserCredential.user.uid,this.props)
+          } catch (e) {
+            console.error(error);
+            this.setState({error})
+
+          }
+          this.props.navigation.navigate('ChooseLanguage')
+        }
+
+        twitterLogin = async () => {
+          try {
+            await RNTwitterSignIn.init('hWBjPH7UU221SKCxMUO5S8Vgx', 'bYGg1faZ9dw73QII5q1a1XJhysjuhcU9IJYJui8SAHBS2S1xbg');
+        
+            const { authToken, authTokenSecret } = await RNTwitterSignIn.logIn();    
+        
+            const credential = firebase.auth.TwitterAuthProvider.credential(authToken, authTokenSecret);
+        
+            const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
+        
+            processLogin(firebaseUserCredential.user.uid,this.props)
+          } catch (e) {
+            console.error(e);
+          }
+          
+          
+        }
+
+
   static navigationOptions = {
     title: 'Sign In',
   }
@@ -116,12 +177,14 @@ class SignIn extends React.Component {
        authMsg:'',
        pushToken:'',
        touchId:true,
-       loggedIn:'logged in no!'
+       loggedIn:'logged in no!',
+       isLogin:false,
+       error:''
      }
 
   render() {
 
-    const { email, password, graphQLError, networkError, authMsg, touchIdError, isVisibleNet, isVisibleGraph, isVisibleAuth, isVisibleTID,  pushToken } = this.state
+    const { email, password, graphQLError, networkError, authMsg, touchIdError, isVisibleNet, isVisibleGraph, isVisibleAuth, isVisibleTID,  pushToken, isLogin, error } = this.state
 
     return (
       <ImageBackground source={require('../assets/loginmap1.jpg')} style={{width: '100%', height: '100%'}}>
@@ -146,9 +209,17 @@ class SignIn extends React.Component {
         </CardItem>
 
         <CardItem >
-          <Icon name='logo-google' style={{color:'#3A7891',margin:20}}/>
-          <Icon name='logo-facebook' style={{color:'#3A7891',margin:20}}/>
-          <Icon name='logo-twitter' style={{color:'#3A7891',margin:20}}/>
+          <TouchableOpacity onPress={() => this.googleLogin()} >
+            <Icon  name='logo-google' style={{color:'#3A7891',margin:20}}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => this.facebookLogin()} >
+            <Icon name='logo-facebook' style={{color:'#3A7891',margin:20}}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => this.twitterLogin()} >
+            <Icon name='logo-twitter' style={{color:'#3A7891',margin:20}}/>
+          </TouchableOpacity>
 
         </CardItem>
 
@@ -191,6 +262,8 @@ class SignIn extends React.Component {
       {isVisibleAuth && <ErrorMutation error={this.state.authMsg} />}
 
       {isVisibleTID && <ErrorMutation error={this.state.touchIdError} />}
+
+      {isLogin && <ErrorMutation error={this.state.error} />}
 
       
       </KeyboardAvoidingView>

@@ -1,16 +1,13 @@
 import React from 'react'
 import { StyleSheet, Image, View, ScrollView, TouchableOpacity, FlatList } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
-import { Query, } from "react-apollo"
 import { container } from '../css'
 import moment from 'moment'
-import firebase from 'react-native-firebase'
-import axios from 'axios'
-import { Text, Button } from 'native-base';
-
+import { Container, Header, Content, Card, CardItem, Body, Text, Button, Input, Icon } from 'native-base';
+import DatePicker from 'react-native-datepicker'
+import { Flag } from 'react-native-svg-flagkit'
 import LangChoice from '../components/LangChoice'
 
-import  { LOGOUT_MUTATION } from '../ApolloQueries'
 
   const removeToken = async () => {
     await AsyncStorage.removeItem('user')
@@ -19,44 +16,18 @@ import  { LOGOUT_MUTATION } from '../ApolloQueries'
     return 
   }
 
-class ChooseLanguage extends React.Component {
+class ChooseHistory extends React.Component {
 
     state = {
       user: '',
+      date: new Date()
     }
 
   static navigationOptions = {
-    title: 'Choose Language',
+    title: 'Recommendations Date',
     headerLeft: null
   }
 
-  signOut = navigation => {
-    firebase.auth().signOut().then(function() {
-      
-
-    }).catch(function(error) {
-      console.log(error)
-    })
-  
-      const {uid} = this.state
-      removeToken()
-      const result = axios({
-        
-        url: 'https://us-central1-langolearn.cloudfunctions.net/api',
-        method: 'post',
-        data: {
-            query: LOGOUT_MUTATION,
-            variables: { uid }
-        }
-      }).then((result) => {
-          return result
-      })
-      .catch(function(error) {
-        console.log(error)
-      })
-
-      navigation.navigate('SignIn')
-  }
 
   componentDidMount = async () => {
     const user1 = await AsyncStorage.getItem('user')
@@ -67,7 +38,9 @@ class ChooseLanguage extends React.Component {
 
  render() {
   const { navigation } = this.props
-  const { user } = this.state
+  const { user, date } = this.state
+  const lang = navigation.getParam('lang', 'NO-ID')
+  const language = navigation.getParam('language', 'NO-ID')
     return (
       <>
       <View style={{flex:1,
@@ -75,8 +48,7 @@ class ChooseLanguage extends React.Component {
         alignItems: "center",
         backgroundColor:'#F4F3EF',
         padding:'5%'}}>
-          
-       {user !== null && 
+      
         <>       
         <View>
           <Text>
@@ -86,29 +58,50 @@ class ChooseLanguage extends React.Component {
 
         <View>
           <Text>
-            Choose a Language
+            {language}
           </Text>
         </View>
 
+        <View style={{margin:20}}>
+          <Flag id={lang.toUpperCase()}  />
+        </View>
+
         <ScrollView>
-       
-        { user.en_rec && <LangChoice lang='en' language='English' navigation={navigation} /> }
 
-        { user.fr_rec && <LangChoice lang='fr' language='French' navigation={navigation} /> }
-
-        { user.de_rec && <LangChoice lang='de' language='German' navigation={navigation} /> }
-
-        { user.es_rec && <LangChoice lang='es' language='Spanish'  navigation={navigation} /> }
+        <View>
+        <DatePicker
+        style={{width: 200}}
+        date={date}
+        mode="date"
+        placeholder="select date"
+        format="YYYY-MM-DD"
+        minDate="2019-01-01"
+        maxDate="2019-12-01"
+        confirmBtnText="Confirm"
+        cancelBtnText="Cancel"
+        customStyles={{
+          dateIcon: {
+            position: 'absolute',
+            left: 0,
+            top: 4,
+            marginLeft: 0
+          },
+          dateInput: {
+            marginLeft: 36
+          }
+        }}
+        onDateChange={(date) => {this.setState({date: date})}}
+      />
+        </View>
         </ScrollView>
         </>
-        }
 
         <View style={{padding:15,alignItems:'center'}}>
-          <Button style={{backgroundColor:'#3A7891'}}  onPress={() => this.signOut(navigation)} title="Sign Out" >
-            <Text>Sign Out</Text>
+          <Button style={{backgroundColor:'#3A7891'}} onPress={() => navigation.navigate('HistoryRecommendations',{ lang, language, date })}  >
+            <Text>Get Recommendations</Text>
           </Button>
         </View>
-       
+    
         </View>
       </>
     )
@@ -131,4 +124,4 @@ const styles = StyleSheet.create({
   container
 })
 
-export default ChooseLanguage
+export default ChooseHistory

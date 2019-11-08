@@ -1,4 +1,10 @@
 rootProject.name = 'langalearn'
+include ':react-native-twitter-signin'
+project(':react-native-twitter-signin').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-twitter-signin/android')
+include ':react-native-fbsdk'
+project(':react-native-fbsdk').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fbsdk/android')
+include ':react-native-selectable-text'
+project(':react-native-selectable-text').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-selectable-text/android')
 include ':react-native-tts'
 project(':react-native-tts').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-tts/android')
 include ':react-native-vector-icons'
