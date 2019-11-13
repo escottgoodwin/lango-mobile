@@ -73,6 +73,22 @@ mutation TranslateSelection($lang:String!, $originalText:String!, $artId:String!
 }
 `
 
+export const ADD_PLAYLIST_MUTATION = gql`
+mutation AddToPlaylist($art_id:String!){
+  addToPlaylist(art_id:$art_id){
+    message
+  }
+}
+`
+
+export const REMOVE_PLAYLIST_MUTATION = gql`
+mutation RemoveFromPlaylist($art_id:String!){
+  removeFromPlaylist(art_id:$art_id){
+    message
+  }
+}
+`
+
 
 export const ARTICLE_QUERY = gql`
 query Article($artId:String!, $lang:String!){
@@ -165,6 +181,32 @@ query User{
     de_rec
     es_rec
     created_at
+  }
+}
+`
+
+export const PLAYLIST_LANG_QUERY = gql`
+query PlayListLang($lang:String!){
+  playListLang(lang:$lang){
+    title
+    link
+    date
+    lang
+    art_id
+    playlist
+  }
+}
+`
+
+export const PLAYLIST_QUERY = gql`
+query PlayList{
+  playList{
+    title
+    link
+    date
+    lang
+    art_id
+    playlist
   }
 }
 `

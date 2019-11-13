@@ -36,7 +36,7 @@ class LangDashboard extends React.Component {
       
         <View>
 
-          <Button block style={{backgroundColor:'#3A7891', marginTop:20}}  onPress={() => navigation.navigate('VocabQuiz')} title="Sign Out" >
+          <Button block style={{backgroundColor:'#3A7891', marginTop:20}}  onPress={() => navigation.navigate('LangQuiz',{ lang })} title="Sign Out" >
             <Text>Quiz</Text>
           </Button>
           
@@ -52,7 +52,7 @@ class LangDashboard extends React.Component {
             </Text>  
           </Button>
 
-          <Button block style={{padding:10,marginTop:10}} onPress={() => navigation.navigate('PlaylistRecommendations',{ lang, language })}>
+          <Button block style={{padding:10,marginTop:10}} onPress={() => navigation.navigate('PlaylistLang',{ lang })}>
             <Text >
               Playlist
             </Text>  
@@ -60,7 +60,7 @@ class LangDashboard extends React.Component {
         </View>
 
         <View style={{padding:15}}>
-          <Button  block style={{backgroundColor:'#3A7891'}}onPress={() => navigation.navigate('ChooseLanguage')}  >
+          <Button  block style={{backgroundColor:'#3A7891'}} onPress={() => navigation.navigate('ChooseLanguage')}  >
             <Text>Home</Text>
           </Button>
         </View>

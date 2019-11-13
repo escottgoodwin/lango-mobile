@@ -82,13 +82,17 @@ class ChooseLanguage extends React.Component {
         </View>
 
         <View>
-         
           <Button  style={{width:'100%', backgroundColor:'#3A7891', marginTop:20}}  onPress={() => navigation.navigate('VocabQuiz')} >
             <Text>Quiz</Text>
           </Button>
-          
         </View>
 
+        <View>
+         <Button  style={{width:'100%', backgroundColor:'#3A7891', marginTop:20}}  onPress={() => navigation.navigate('PlaylistRecommendations')} >
+           <Text>Playlist</Text>
+         </Button>
+       </View>
+        
         <ScrollView>
 
           <Grid>
