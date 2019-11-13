@@ -786,7 +786,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.invertase.langalearn;
+				PRODUCT_BUNDLE_IDENTIFIER = com.langalearn.langalearn;
 				PRODUCT_NAME = langalearn;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -810,7 +810,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.invertase.langalearn;
+				PRODUCT_BUNDLE_IDENTIFIER = com.langalearn.langalearn;
 				PRODUCT_NAME = langalearn;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

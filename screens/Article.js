@@ -1,11 +1,13 @@
 import React from 'react'
-import { View, ScrollView, Modal } from 'react-native'
-import { Query, Mutation } from "react-apollo"
+import { View, ScrollView, Modal, TouchableOpacity } from 'react-native'
 import moment from 'moment'
 import Tts from 'react-native-tts';
 import { Button, Icon, Text, Toast } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid'
+import { Flag } from 'react-native-svg-flagkit'
+import { langSwitch } from '../utils'
 
+import { Query, Mutation } from "react-apollo"
 import  { ARTICLE_QUERY, TRANSLATION_MUTATION } from '../ApolloQueries'
 
 import Loading from './Loading'
@@ -87,6 +89,8 @@ class Article extends React.Component {
 
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
+  const { language, flag_lang } = langSwitch(lang)
+  const flaglang = flag_lang.toUpperCase()
   const art_id = navigation.getParam('art_id', 'NO-ID')
   const { playing, started, modalVisible, orig_text, trans_text, errorMsg, selText } = this.state
 
@@ -109,6 +113,7 @@ class Article extends React.Component {
                 onRequestClose={() => {
                   Alert.alert('Modal has been closed.');
                 }}>
+                <ScrollView>
                 <View style={{flex:1, padding:20, backgroundColor:'#F4F3EF'}}>
                   <View style={{marginTop:50}}>
                   <Text style={{display: 'flex', fontSize:24, alignItems: 'center'}}>Translations</Text>
@@ -124,6 +129,7 @@ class Article extends React.Component {
                     <Text>Close</Text>
                   </Button>
                 </View>
+                </ScrollView>
               </Modal>
 
               
@@ -134,21 +140,43 @@ class Article extends React.Component {
               </View>
 
               <View>
+                
                 <Text style={{fontSize:24,marginBottom:10,color:'#3A7891'}}>
                   {title}
                 </Text>
+                  
               </View>
 
-              <View style={{height:50}}>
+              <View style={{height:60}}>
 
-                {selText.length>0 && 
+                {
+                  (selText.length===0 && orig_text.length===0) &&
+                    <Grid>
+
+                    <Row>
+                      <Col size={20}>
+                      <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
+                        <Flag id={flaglang} size={0.3} /> 
+                      </TouchableOpacity>
+                      </Col>
+                      <Col size={80}>
+                        <Text style={{fontSize:18, color:'green'}}>Highlight a word to translate.</Text> 
+                      </Col>
+                    </Row>
+                  </Grid>
+                }
+
+                {selText.length>0 &&
                 <Grid>
                   <Row>
-                    <Col size={70}>
-                    <Text style={{fontSize:22,color:'green'}}>{selText}</Text>
+                    <Col size={20}>
+                    <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
+                      <Flag id={flaglang} size={0.3} /> 
+                    </TouchableOpacity>
                     </Col>
-
-                    <Col size={30}>
+                    <Col size={80}>
+                    <Text style={{fontSize:18,color:'green'}}>{selText}</Text>
+                    
                     <Mutation
                       mutation={TRANSLATION_MUTATION}
                       variables={{ 
@@ -164,33 +192,38 @@ class Article extends React.Component {
                       }}
                     >
                     {mutation => (
-  
-                      <Button small style={{backgroundColor:'blue'}} onPress={mutation}>
-                        <Text>Translate</Text>
-                      </Button>
+                      <View style={{width:100}}>
+                        <Button small style={{backgroundColor:'blue'}} onPress={mutation}>
+                          <Text>Translate</Text>
+                        </Button>
+                      </View>
                       )}
                     </Mutation>
                     
                     </Col>
                   </Row>
                 </Grid>
-                    
-                    
+                
                 }
 
-              {orig_text.length>0 &&
+              {orig_text.length>0 && 
                 <Grid>
 
                   <Row>
-                    <Col>
-                       <Text style={{fontSize:22, color:'green'}}>{orig_text}</Text> 
+                    <Col size={20}>
+                    <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
+                      <Flag id={flaglang} size={0.3} /> 
+                    </TouchableOpacity>
                     </Col>
 
-                    <Col>
-                      <Text style={{fontSize:22, color:'blue'}}>{trans_text}</Text>
+                    <Col size={80}>
+                       <Text style={{fontSize:18, color:'green'}}>{orig_text}</Text> 
+                       <Text style={{fontSize:18, color:'blue'}}>{trans_text}</Text>
                     </Col>
+
                   </Row>
                 </Grid>
+
               }
                  
                 {errorMsg.length>0 && <Text style={{fontSize:22, color:'red'}}>{errorMsg}</Text>} 

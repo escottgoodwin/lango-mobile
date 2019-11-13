@@ -1,20 +1,11 @@
 import React from 'react'
-import { StyleSheet, Image, View, ScrollView, TouchableOpacity, FlatList } from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import { container } from '../css'
-import moment from 'moment'
-import { Container, Header, Content, Card, CardItem, Body, Text, Button, Input, Icon } from 'native-base';
+import {  Text, Button} from 'native-base';
 import DatePicker from 'react-native-datepicker'
 import { Flag } from 'react-native-svg-flagkit'
-import LangChoice from '../components/LangChoice'
-
-
-  const removeToken = async () => {
-    await AsyncStorage.removeItem('user')
-    await AsyncStorage.removeItem('auth_token')
-
-    return 
-  }
+import { langSwitch } from '../utils'
 
 class ChooseHistory extends React.Component {
 
@@ -28,19 +19,20 @@ class ChooseHistory extends React.Component {
     headerLeft: null
   }
 
-
   componentDidMount = async () => {
     const user1 = await AsyncStorage.getItem('user')
     const user = JSON.parse(user1)
     this.setState({user})
   }
 
-
  render() {
   const { navigation } = this.props
   const { user, date } = this.state
   const lang = navigation.getParam('lang', 'NO-ID')
   const language = navigation.getParam('language', 'NO-ID')
+  const { flag_lang } = langSwitch(lang)
+  const flaglang = flag_lang.toUpperCase()
+
     return (
       <>
       <View style={{flex:1,
@@ -63,7 +55,9 @@ class ChooseHistory extends React.Component {
         </View>
 
         <View style={{margin:20}}>
-          <Flag id={lang.toUpperCase()}  />
+          <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
+            <Flag id={flaglang} /> 
+          </TouchableOpacity>
         </View>
 
         <ScrollView>

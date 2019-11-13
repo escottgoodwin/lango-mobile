@@ -1,13 +1,11 @@
 import React from 'react'
-import { StyleSheet, Image, View, ScrollView, TouchableOpacity, FlatList } from 'react-native'
+import { StyleSheet, View, ScrollView } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
-import { Query, } from "react-apollo"
 import { container } from '../css'
-import moment from 'moment'
 import firebase from 'react-native-firebase'
 import axios from 'axios'
 import { Text, Button } from 'native-base';
-
+import { Row, Grid } from 'react-native-easy-grid'
 import LangChoice from '../components/LangChoice'
 
 import  { LOGOUT_MUTATION } from '../ApolloQueries'
@@ -84,24 +82,36 @@ class ChooseLanguage extends React.Component {
         </View>
 
         <View>
-          <Text>
-            Choose a Language
-          </Text>
+         
+          <Button  style={{width:'100%', backgroundColor:'#3A7891', marginTop:20}}  onPress={() => navigation.navigate('VocabQuiz')} >
+            <Text>Quiz</Text>
+          </Button>
+          
         </View>
 
         <ScrollView>
-        { user.en_rec && <LangChoice lang='en' language='English' navigation={navigation} /> }
 
-        { user.fr_rec && <LangChoice lang='fr' language='French' navigation={navigation} /> }
+          <Grid>
+          <Row>
+          { user.en_rec &&  <LangChoice lang='en' language='English' navigation={navigation} /> }
+          </Row>
+          <Row>
+          { user.fr_rec &&  <LangChoice lang='fr' language='French' navigation={navigation} /> }
+          </Row>
+          <Row>
+          { user.de_rec &&  <LangChoice lang='de' language='German' navigation={navigation} />  }
+          </Row>
+          <Row>
+          { user.es_rec && <LangChoice lang='es' language='Spanish'  navigation={navigation} /> }
+          </Row>
+          </Grid>
 
-        { user.de_rec && <LangChoice lang='de' language='German' navigation={navigation} /> }
-
-        { user.es_rec && <LangChoice lang='es' language='Spanish'  navigation={navigation} /> }
         </ScrollView>
+        
         </>
 
         <View style={{padding:15,alignItems:'center'}}>
-          <Button style={{backgroundColor:'#3A7891'}}  onPress={() => this.signOut(navigation)} title="Sign Out" >
+          <Button style={{backgroundColor:'#3A7891'}}  onPress={() => this.signOut(navigation)} >
             <Text>Sign Out</Text>
           </Button>
         </View>

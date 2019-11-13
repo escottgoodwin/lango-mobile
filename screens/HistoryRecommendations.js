@@ -1,29 +1,19 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage';
+import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native'
 import { Query, } from "react-apollo"
 import { container } from '../css'
 import moment from 'moment'
-import firebase from 'react-native-firebase'
-import axios from 'axios'
 import { Flag } from 'react-native-svg-flagkit'
 import ArtRec from '../components/ArtRec'
 import { Col, Row, Grid } from 'react-native-easy-grid'
-import  { LOGOUT_MUTATION, ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
+import  { ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
+import { langSwitch } from '../utils'
 
 import Loading from './Loading'
-
-  const removeToken = async () => {
-    await AsyncStorage.removeItem('user')
-    await AsyncStorage.removeItem('auth_token')
-
-    return 
-  }
 
 class HistoryRecommendations extends React.Component {
 
     state = {
-      user: '',
       date:null,
       graphQLError: '',
       isVisibleGraph:false,
@@ -36,45 +26,13 @@ class HistoryRecommendations extends React.Component {
     headerLeft: null
   }
 
-  signOut = navigation => {
-    firebase.auth().signOut().then(function() {
-      
-    }).catch(function(error) {
-      console.log(error)
-    })
-  
-      const {uid} = this.state
-      removeToken()
-      const result = axios({
-        
-        url: 'https://us-central1-langolearn.cloudfunctions.net/api',
-        method: 'post',
-        data: {
-            query: LOGOUT_MUTATION,
-            variables: { uid }
-        }
-      }).then((result) => {
-          return result
-      })
-      .catch(function(error) {
-        console.log(error)
-      })
-
-      navigation.navigate('SignIn')
-  }
-
-  componentDidMount = async () => {
-    const user1 = await AsyncStorage.getItem('user')
-    const user = JSON.parse(user1)
-    this.setState({user})
-  }
-
  render() {
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const date = navigation.getParam('date', 'NO-ID')
   const { user, graphQLError, networkError, isVisibleNet, isVisibleGraph } = this.state
-  const flag = lang.toUpperCase()
+  const { language, flag_lang } = langSwitch(lang)
+  const flaglang = flag_lang.toUpperCase()
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       <ScrollView>
@@ -94,7 +52,9 @@ class HistoryRecommendations extends React.Component {
                 <Grid>
                   <Row>
                     <Col size={20}>
-                      <Flag id={flag} size={0.25} /> 
+                      <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
+                        <Flag id={flaglang} size={0.20} /> 
+                      </TouchableOpacity>
                     </Col>
 
                     <Col size={80}>
@@ -106,7 +66,7 @@ class HistoryRecommendations extends React.Component {
 
                     <View>
                     <Text style={{fontSize:18}}>
-                      {articleRecommendationsHistory.length} Recommendations
+                       {articleRecommendationsHistory.length} {language} Recommendations
                     </Text>
                   </View>
                     </Col>

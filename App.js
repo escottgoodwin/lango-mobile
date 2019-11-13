@@ -2,7 +2,7 @@ import '@babel/polyfill'
 import React from 'react'
 import AsyncStorage from '@react-native-community/async-storage';
 import { createAppContainer } from 'react-navigation'
-
+import { Root } from "native-base";
 import { createStackNavigator } from 'react-navigation-stack';
 import NavigationService from './NavigationService'
 import { ApolloClient } from 'apollo-client'
@@ -21,6 +21,8 @@ import Article from './screens/Article'
 import NewQuestionModal from './components/NewQuestionModal'
 import Welcome from './screens/Welcome'
 import ChooseLanguage from './screens/ChooseLanguage'
+import VocabQuiz from './screens/VocabQuiz'
+import LangDashboard from './screens/LangDashboard'
 
 import HistoryRecommendations from './screens/HistoryRecommendations'
 
@@ -66,7 +68,9 @@ const MainStack = createStackNavigator(
     ChooseLanguage: ChooseLanguage,
     HistoryRecommendations: HistoryRecommendations,
     PlaylistRecommendations: PlaylistRecommendations,
-    ChooseHistory: ChooseHistory
+    ChooseHistory: ChooseHistory,
+    VocabQuiz: VocabQuiz,
+    LangDashboard: LangDashboard
   },
   {
     initialRouteName: "SignIn",
@@ -155,11 +159,13 @@ export default class App extends React.Component {
  render() {
     return (
       <ApolloProvider client={client}>
-      <Container
-        ref={navigatorRef => {
-          NavigationService.setTopLevelNavigator(navigatorRef)
-        }}
-      />
+        <Root> 
+          <Container
+            ref={navigatorRef => {
+              NavigationService.setTopLevelNavigator(navigatorRef)
+            }}
+          />
+        </Root>
       </ApolloProvider>
     )
   }
