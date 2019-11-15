@@ -25,6 +25,7 @@ import VocabQuiz from './screens/VocabQuiz'
 import LangDashboard from './screens/LangDashboard'
 import LangQuiz from './screens/LangQuiz'
 import PlaylistLang from './screens/PlaylistLang'
+import PlayListPlay from './screens/PlayListPlay'
 
 
 import HistoryRecommendations from './screens/HistoryRecommendations'
@@ -75,7 +76,8 @@ const MainStack = createStackNavigator(
     VocabQuiz: VocabQuiz,
     LangDashboard: LangDashboard,
     LangQuiz: LangQuiz,
-    PlaylistLang: PlaylistLang
+    PlaylistLang: PlaylistLang,
+    PlayListPlay: PlayListPlay
   },
   {
     initialRouteName: "SignIn",

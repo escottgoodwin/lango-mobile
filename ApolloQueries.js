@@ -73,6 +73,17 @@ mutation TranslateSelection($lang:String!, $originalText:String!, $artId:String!
 }
 `
 
+export const TRANSLATE_SENTENCE_MUTATION = gql`
+mutation TranslateSent($lang:String!,$originalText:String!){
+  translateSentence(lang:$lang,orginalText:$originalText){
+    orig_text
+    trans_text
+    orig_lang
+    trans_lang
+  }
+}
+`
+
 export const ADD_PLAYLIST_MUTATION = gql`
 mutation AddToPlaylist($art_id:String!){
   addToPlaylist(art_id:$art_id){

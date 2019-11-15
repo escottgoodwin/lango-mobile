@@ -47,7 +47,7 @@ class PlaylistRecommendations extends React.Component {
               </View>
 
               <View style={{padding:15}}>
-                <Button block success onPress={() => navigation.navigate('PlayPlayList')}  >
+                <Button block success onPress={() => navigation.navigate('PlayListPlay',{ playList })}  >
                   <Text>Play</Text>
                 </Button>
               </View>
