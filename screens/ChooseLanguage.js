@@ -21,6 +21,11 @@ class ChooseLanguage extends React.Component {
 
     state = {
       user: '',
+      name:'',
+      en_rec:false,
+      fr_rec:false,
+      de_rec:false,
+      es_rec:false
     }
 
   static navigationOptions = {
@@ -58,14 +63,15 @@ class ChooseLanguage extends React.Component {
 
   componentDidMount = async () => {
     const user1 = await AsyncStorage.getItem('user')
+    console.log(user1)
     const user = JSON.parse(user1)
-    this.setState({user})
+    const { name, en_rec, de_rec, fr_rec, es_rec } = user
+    this.setState({name, en_rec, de_rec, fr_rec, es_rec})
   }
-
 
  render() {
   const { navigation } = this.props
-  const { user } = this.state
+  const { name, en_rec, de_rec, fr_rec, es_rec } = this.state
     return (
       <>
       <View style={{flex:1,
@@ -77,7 +83,7 @@ class ChooseLanguage extends React.Component {
         <>       
         <View>
           <Text>
-            Welcome {user.name}
+            Welcome {name}
           </Text>
         </View>
 
@@ -93,20 +99,20 @@ class ChooseLanguage extends React.Component {
          </Button>
        </View>
         
-        <ScrollView>
+        <ScrollView style={{marginTop:10}}>
 
           <Grid>
           <Row>
-          { user.en_rec &&  <LangChoice lang='en' language='English' navigation={navigation} /> }
+          { en_rec &&  <LangChoice lang='en' language='English' navigation={navigation} /> }
           </Row>
           <Row>
-          { user.fr_rec &&  <LangChoice lang='fr' language='French' navigation={navigation} /> }
+          { fr_rec &&  <LangChoice lang='fr' language='French' navigation={navigation} /> }
           </Row>
           <Row>
-          { user.de_rec &&  <LangChoice lang='de' language='German' navigation={navigation} />  }
+          { de_rec &&  <LangChoice lang='de' language='German' navigation={navigation} />  }
           </Row>
           <Row>
-          { user.es_rec && <LangChoice lang='es' language='Spanish'  navigation={navigation} /> }
+          { es_rec && <LangChoice lang='es' language='Spanish'  navigation={navigation} /> }
           </Row>
           </Grid>
 

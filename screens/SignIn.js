@@ -19,21 +19,21 @@ import ErrorMutation from '../components/ErrorMutation'
 
 
 const processLogin = async (uid,props) => {
-  const newToken = await AsyncStorage.setItem('uid', uid)
+  await AsyncStorage.setItem('uid', uid)
 
-  axios({
+  const result = await axios({
     url: 'https://us-central1-langolearn.cloudfunctions.net/api',
     method: 'post',
     data: {
         query: LOGIN_MUTATION,
         variables: { uid }
     }
-  }).then((result) => {
-      const { token, user } = result.data.data.login
-      const newToken = AsyncStorage.setItem('auth_token', token)
-      const user3 = AsyncStorage.setItem('user', JSON.stringify(user))
   })
 
+  const { token, user } = result.data.data.login
+  await AsyncStorage.setItem('auth_token', token)
+  await AsyncStorage.setItem('user', JSON.stringify(user))
+  props.navigation.navigate('ChooseLanguage')
 }
 
 class SignIn extends React.Component {
@@ -71,7 +71,7 @@ class SignIn extends React.Component {
           var errorMessage = error.message;
           this.setState({errorMessage,showError:true})
         })
-        this.props.navigation.navigate('ChooseLanguage')
+        
       }
 
       touchIdLogin = async () => {
@@ -136,7 +136,7 @@ class SignIn extends React.Component {
             this.setState({error})
 
           }
-          this.props.navigation.navigate('ChooseLanguage')
+          
         }
 
         twitterLogin = async () => {
