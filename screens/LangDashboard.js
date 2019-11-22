@@ -8,8 +8,7 @@ import { langSwitch } from '../utils'
 class LangDashboard extends React.Component {
 
   static navigationOptions = {
-    title: 'Language Dashboard',
-    headerLeft: null
+    title: 'Language Dashboard'
   }
 
  render() {

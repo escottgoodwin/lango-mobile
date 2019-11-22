@@ -15,7 +15,6 @@ import type { Notification, NotificationOpen } from 'react-native-firebase'
 import { fromTop, fadeIn } from 'react-navigation-transitions'
 
 import SignIn from './screens/SignIn'
-import SignOut from './screens/SignOut'
 import CurrentRecommendations from './screens/CurrentRecommendations'
 import Article from './screens/Article'
 import NewQuestionModal from './components/NewQuestionModal'
@@ -27,13 +26,9 @@ import LangQuiz from './screens/LangQuiz'
 import PlaylistLang from './screens/PlaylistLang'
 import PlayListPlay from './screens/PlayListPlay'
 import PlayListPlay1 from './screens/PlayListPlay1'
-
 import HistoryRecommendations from './screens/HistoryRecommendations'
-
 import PlaylistRecommendations from './screens/PlaylistRecommendations'
-
 import ChooseHistory from './screens/ChooseHistory'
-
 
 const uri = 'https://us-central1-langolearn.cloudfunctions.net/api'
 
@@ -65,7 +60,6 @@ const client = new ApolloClient({
 const MainStack = createStackNavigator(
   {
     SignIn: SignIn,
-    SignOut: SignOut,
     CurrentRecommendations: CurrentRecommendations,
     Welcome: Welcome,
     Article: Article,

@@ -26,6 +26,10 @@ class PlayArticle extends Component{
     currSent:'',
     playing:false,
     started:false,
+    speed1:true,
+    speed66:false,
+    speed75:false,
+    speed50:false
   }
 
   componentDidMount = async () => {
@@ -118,6 +122,39 @@ class PlayArticle extends Component{
   }
 
   changeSpeed = rate => {
+    if (rate===0.50){
+      this.setState({
+        speed1:true,
+        speed50:false,
+        speed66:false,
+        speed75:false
+      })
+    }
+    if (rate===0.375){
+      this.setState({
+        speed1:false,
+        speed50:false,
+        speed66:false,
+        speed75:true
+      })
+    }
+    if (rate===0.33){
+      this.setState({
+        speed1:false,
+        speed50:false,
+        speed66:true,
+        speed75:false
+      })
+    }
+
+    if (rate===0.25){
+      this.setState({
+        speed1:false,
+        speed50:true,
+        speed66:false,
+        speed75:false
+      })
+    }
     Tts.pause()
     Tts.setDefaultRate(rate)
     this.setState({playing:false, started:false})
@@ -138,10 +175,10 @@ class PlayArticle extends Component{
 
   render(){
 
-    const { currSent, token, started, playing } = this.state
+    const { currSent, token, started, playing, speed1, speed50, speed66, speed75 } = this.state
 
     const { art_id, article, title, lang, navigation } = this.props
-    console.log(this.props)
+
     return(
       <Container style={{backgroundColor:'#F4F3EF'}} >
           <Grid>
@@ -168,25 +205,25 @@ class PlayArticle extends Component{
             <Row style={{height:60}}>
 
               <Col>
-                <Button style={{margin:10}} bordered warning onPress={() => this.changeSpeed(0.50)} title="1X" >
+                <Button style={{margin:10}} bordered={!speed1} warning onPress={() => this.changeSpeed(0.50)} title="1X" >
                   <Text warning>1X</Text>
                 </Button>
                 </Col>
                 
                 <Col>
-                <Button style={{margin:10}} bordered warning onPress={() => this.changeSpeed(0.375)} title="1X" >
+                <Button style={{margin:10}} bordered={!speed75} warning onPress={() => this.changeSpeed(0.375)} title="1X" >
                   <Text  warning>0.75X</Text>
                 </Button>
                 </Col>
 
                 <Col>
-                <Button style={{margin:10}}  bordered warning onPress={() => this.changeSpeed(0.33)} title="1X" >
+                <Button style={{margin:10}}  bordered={!speed66} warning onPress={() => this.changeSpeed(0.33)} title="1X" >
                   <Text  warning>0.66X</Text>
                 </Button>
                 </Col>
 
                 <Col>
-                <Button style={{margin:10}} bordered warning onPress={() => this.changeSpeed(0.25)} title="1X" >
+                <Button style={{margin:10}} bordered={!speed50} warning onPress={() => this.changeSpeed(0.25)} title="1X" >
                   <Text warning>0.5X</Text>
                 </Button>
                 </Col>
@@ -206,7 +243,6 @@ class PlayArticle extends Component{
               <Icon  type="FontAwesome" name="play" />
             </Button>
             }
-
             </Col>
 
             <Col >
@@ -217,7 +253,7 @@ class PlayArticle extends Component{
 
             <Col >
               <Button style={{backgroundColor:'#3A7891', marginRight:10}} onPress={() => this.props.nextArticle()}  >
-                <Text>Skip</Text>
+                 <Icon  type="FontAwesome" style={{color:'white'}} name="forward" />
               </Button>
             </Col>
             

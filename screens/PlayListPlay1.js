@@ -10,6 +10,11 @@ import Loading from './Loading'
 
 class PlayListPlay1 extends React.Component {
 
+  static navigationOptions = {
+    title: 'Play Article'
+  }
+
+
   nextArticle = () => {
     const { navigation } = this.props
     const art_id = navigation.getParam('art_id', 'NO-ID')

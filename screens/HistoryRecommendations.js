@@ -22,8 +22,7 @@ class HistoryRecommendations extends React.Component {
     }
 
   static navigationOptions = {
-    title: 'History Recommendations',
-    headerLeft: null
+    title: 'History Recommendations'
   }
 
  render() {

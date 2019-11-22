@@ -19,7 +19,6 @@ class PlaylistRecommendations extends React.Component {
 
   static navigationOptions = {
     title: 'Playlist',
-    headerLeft: null
   }
 
  render() {

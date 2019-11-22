@@ -12,8 +12,7 @@ import Loading from './Loading'
 class LangQuiz extends React.Component {
 
   static navigationOptions = {
-    title: 'Vocabulary Quiz',
-    headerLeft: null
+    title: 'Vocabulary Quiz'
   }
 
   render(){

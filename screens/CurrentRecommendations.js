@@ -7,9 +7,18 @@ import { Col, Row, Grid } from 'react-native-easy-grid'
 import { langSwitch } from '../utils'
 
 import { Query } from "react-apollo"
-import  { ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
+import  { ARTICLE_REC_ALL_QUERY } from '../ApolloQueries'
 
 import Loading from './Loading'
+
+function sortDate(array){
+
+  return array.sort(function(a, b) {
+    a = new Date(a.date);
+    b = new Date(b.date);
+    return a>b ? -1 : a<b ? 1 : 0;
+  })
+}
 
 class CurrentRecommendations extends React.Component {
 
@@ -23,13 +32,7 @@ class CurrentRecommendations extends React.Component {
     }
 
   static navigationOptions = {
-    title: 'Current Recommendations',
-    headerLeft: null
-  }
-
-  componentDidMount = async () => {
-    const now = new Date()
-    this.setState({date:now})
+    title: 'Current Recommendations'
   }
 
  render() {
@@ -42,14 +45,15 @@ class CurrentRecommendations extends React.Component {
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       <ScrollView>
 
-        <Query  query={ARTICLE_REC_DATE_QUERY}
+        <Query  query={ARTICLE_REC_ALL_QUERY}
               fetchPolicy={'cache-and-network'}
               variables={{ lang, date }}  >
             {({ loading, error, data }) => {
               if (loading) return <Loading />
               if (error) return <View><Text>{JSON.stringify(error)}</Text></View>
 
-            const { articleRecommendationsHistory } = data
+            const { articleRecommendationsAll } = data
+            const artRecsSorted = sortDate(articleRecommendationsAll)
  
             return (
               <>
@@ -66,7 +70,7 @@ class CurrentRecommendations extends React.Component {
                     
                     <View>
                     <Text style={{fontSize:22}}>
-                      {articleRecommendationsHistory.length} Recommendations
+                      {artRecsSorted.length} Recommendations
                     </Text>
                   </View>
                     </Col>
@@ -77,7 +81,7 @@ class CurrentRecommendations extends React.Component {
                 </View>
 
               <FlatList
-                data={articleRecommendationsHistory}
+                data={artRecsSorted}
                 renderItem={
                   ({ item }) => (
                     <ArtRec {...item} props={this.props}/>

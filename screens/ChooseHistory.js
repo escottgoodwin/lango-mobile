@@ -15,8 +15,7 @@ class ChooseHistory extends React.Component {
     }
 
   static navigationOptions = {
-    title: 'Recommendations Date',
-    headerLeft: null
+    title: 'Recommendations Date'
   }
 
   componentDidMount = async () => {

@@ -20,8 +20,7 @@ class PlaylistLang extends React.Component {
     }
 
   static navigationOptions = {
-    title: 'Playlist',
-    headerLeft: null
+    title: 'Playlist'
   }
 
  render() {
