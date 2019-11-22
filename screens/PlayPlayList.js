@@ -13,7 +13,6 @@ class PlayPlayList extends React.Component {
 
   static navigationOptions = {
     title: 'Play Playlist',
-    headerLeft: null
   }
   state = {
     currArtIndex:0,

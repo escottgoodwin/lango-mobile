@@ -8,19 +8,19 @@ import  { ARTICLE_QUERY } from '../ApolloQueries'
 import PlayArticle from '../components/PlayArticle'
 import Loading from './Loading'
 
-class PlayListPlay extends React.Component {
+class PlayListPlay1 extends React.Component {
 
   nextArticle = () => {
     const { navigation } = this.props
-    const playList = navigation.getParam('playList', 'NO-ID')
-    playList.shift()
-    navigation.navigate('PlayListPlay',{ playList })
+    const art_id = navigation.getParam('art_id', 'NO-ID')
+    navigation.navigate('Article',{ art_id })
   }
 
   render(){
     const { navigation } = this.props
-    const playList = navigation.getParam('playList', 'NO-ID')
-    const { art_id, lang } = playList[0]
+    const art_id = navigation.getParam('art_id', 'NO-ID')
+    const lang = navigation.getParam('lang', 'NO-ID')
+
   return (
 
           <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
@@ -42,4 +42,4 @@ class PlayListPlay extends React.Component {
 
   }
 
-export default PlayListPlay
+export default PlayListPlay1

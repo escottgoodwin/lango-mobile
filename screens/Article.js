@@ -2,7 +2,7 @@ import React from 'react'
 import { View, ScrollView, Modal, TouchableOpacity } from 'react-native'
 import moment from 'moment'
 import Tts from 'react-native-tts';
-import { Button, Icon, Text, Toast } from 'native-base';
+import { Button, Icon, Container, Text } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid'
 import { Flag } from 'react-native-svg-flagkit'
 import { langSwitch } from '../utils'
@@ -33,7 +33,6 @@ class Article extends React.Component {
 
   static navigationOptions = {
     title: 'Article',
-    headerLeft: null
   }
 
   componentDidMount = async () => {
@@ -68,9 +67,10 @@ class Article extends React.Component {
   }
 
   changeSpeed = rate => {
-    Tts.stop()
+    Tts.pause()
     Tts.setDefaultRate(rate)
     this.setState({playing:false, started:false})
+    Tts.resume()
   }
 
   finished = () => {
@@ -113,10 +113,10 @@ class Article extends React.Component {
                 onRequestClose={() => {
                   Alert.alert('Modal has been closed.');
                 }}>
+                <Container style={{backgroundColor:'#F4F3EF'}}>
                 <ScrollView>
-                <View style={{flex:1, padding:20, backgroundColor:'#F4F3EF'}}>
                   <View style={{marginTop:50}}>
-                  <Text style={{display: 'flex', fontSize:24, alignItems: 'center'}}>Translations</Text>
+                  <Text style={{display: 'flex', fontSize:24, margin: 20}}>Translations</Text>
                     
                     {translations.map((t,i) => 
                     <View key={i} style={{margin: 20}}>
@@ -125,14 +125,17 @@ class Article extends React.Component {
                     </View>
                       )}
                   </View>
-                  <Button onPress={() => this.setState({modalVisible:false})}>
+                  </ScrollView>
+                  <View style={{height:60}}>
+                  <Button style={{marginLeft:20,marginRight:20}} onPress={() => this.setState({modalVisible:false})}>
                     <Text>Close</Text>
                   </Button>
                 </View>
-                </ScrollView>
+                
+                </Container>
               </Modal>
 
-              
+              <Container style={{backgroundColor:'#F4F3EF'}}>
               <View>
                 <Text>
                   {moment(date).format('MMMM Do YYYY')}
@@ -141,7 +144,7 @@ class Article extends React.Component {
 
               <View>
                 
-                <Text style={{fontSize:24,marginBottom:10,color:'#3A7891'}}>
+                <Text style={{fontSize:16,marginBottom:10,color:'#3A7891'}}>
                   {title}
                 </Text>
                   
@@ -156,11 +159,11 @@ class Article extends React.Component {
                     <Row>
                       <Col size={20}>
                       <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
-                        <Flag id={flaglang} size={0.3} /> 
+                        <Flag id={flaglang} size={0.2} /> 
                       </TouchableOpacity>
                       </Col>
                       <Col size={80}>
-                        <Text style={{fontSize:18, color:'green'}}>Highlight a word to translate.</Text> 
+                        <Text style={{fontSize:14, color:'green'}}>Select word to translate.</Text> 
                       </Col>
                     </Row>
                   </Grid>
@@ -175,7 +178,7 @@ class Article extends React.Component {
                     </TouchableOpacity>
                     </Col>
                     <Col size={80}>
-                    <Text style={{fontSize:18,color:'green'}}>{selText}</Text>
+                    <Text style={{fontSize:14,color:'green'}}>{selText}</Text>
                     
                     <Mutation
                       mutation={TRANSLATION_MUTATION}
@@ -217,8 +220,8 @@ class Article extends React.Component {
                     </Col>
 
                     <Col size={80}>
-                       <Text style={{fontSize:18, color:'green'}}>{orig_text}</Text> 
-                       <Text style={{fontSize:18, color:'blue'}}>{trans_text}</Text>
+                       <Text style={{fontSize:14, color:'green'}}>{orig_text}</Text> 
+                       <Text style={{fontSize:14, color:'blue'}}>{trans_text}</Text>
                     </Col>
 
                   </Row>
@@ -249,53 +252,22 @@ class Article extends React.Component {
         
               <Row>
               <Col>
-              {started ? 
-    
-              <Button style={{backgroundColor: playing ? '#dc3545' : '#28a745'}}  onPress={() => playing ? this.pause() : this.resume()} title="Pause" >
-                {playing ?  <Icon  type="FontAwesome" name="pause" /> :  <Icon  type="FontAwesome" name="play" />}
+              
+              <Button style={{backgroundColor:'#28a745',marginRight:10}}  onPress={() =>  navigation.navigate('PlayListPlay1',{ art_id, lang })} >
+                <Icon type="FontAwesome" name="play" /><Text>Play</Text>
               </Button>
-                :
-              <Button style={{backgroundColor:'#28a745'}}  onPress={() => this.play(article)} title="Play" >
-                <Icon type="FontAwesome" name="play" />
-              </Button>
-              }
                
               </Col>
 
-              <Col>
-                <Button bordered onPress={() => this.changeSpeed(0.50)} title="1X" >
-                  <Text style={{color:'blue'}}>1X</Text>
-                </Button>
-                </Col>
-                
                 <Col>
-                <Button bordered  onPress={() => this.changeSpeed(0.375)} title="1X" >
-                  <Text style={{color:'blue'}}>3/4X</Text>
-                </Button>
-                </Col>
-
-                <Col>
-                <Button bordered  onPress={() => this.changeSpeed(0.33)} title="1X" >
-                  <Text style={{color:'blue'}}>2/3X</Text>
-                </Button>
-                </Col>
-
-                <Col>
-                <Button bordered onPress={() => this.changeSpeed(0.25)} title="1X" >
-                  <Text style={{color:'blue'}}>1/2X</Text>
-                </Button>
-                </Col>
-             
-
-                <Col>
-                <Button onPress={() => this.setState({modalVisible:true})} title="1X" >
-                  <Icon type="FontAwesome" name="language" />
+                <Button onPress={() => this.setState({modalVisible:true})}  >
+                  <Icon type="FontAwesome" name="language" /><Text style={{fontSize:14}}>Translations</Text>
                 </Button>
                 </Col>
                 </Row>
               
               </Grid>
-   
+              </Container>
               </>
               )
             }}

@@ -154,6 +154,7 @@ query ArticleRecommendationHistory($lang:String!,$date:String!){
     date
     lang
     art_id
+    playlist
   }
 }
 `

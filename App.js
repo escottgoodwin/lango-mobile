@@ -26,7 +26,7 @@ import LangDashboard from './screens/LangDashboard'
 import LangQuiz from './screens/LangQuiz'
 import PlaylistLang from './screens/PlaylistLang'
 import PlayListPlay from './screens/PlayListPlay'
-
+import PlayListPlay1 from './screens/PlayListPlay1'
 
 import HistoryRecommendations from './screens/HistoryRecommendations'
 
@@ -77,7 +77,8 @@ const MainStack = createStackNavigator(
     LangDashboard: LangDashboard,
     LangQuiz: LangQuiz,
     PlaylistLang: PlaylistLang,
-    PlayListPlay: PlayListPlay
+    PlayListPlay: PlayListPlay,
+    PlayListPlay1:PlayListPlay1
   },
   {
     initialRouteName: "SignIn",
@@ -103,7 +104,7 @@ const RootStack = createStackNavigator(
   }
 )
 
-const Container = createAppContainer(RootStack)
+const Container = createAppContainer(MainStack)
 
 export default class App extends React.Component {
 

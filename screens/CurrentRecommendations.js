@@ -53,7 +53,7 @@ class CurrentRecommendations extends React.Component {
  
             return (
               <>
-
+              <View style={{marginBottom:5}}> 
               <Grid>
                   <Row>
                     <Col size={20}>
@@ -74,6 +74,7 @@ class CurrentRecommendations extends React.Component {
                   </Row>
 
                 </Grid>
+                </View>
 
               <FlatList
                 data={articleRecommendationsHistory}
