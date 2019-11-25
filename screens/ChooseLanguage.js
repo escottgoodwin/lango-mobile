@@ -29,7 +29,8 @@ class ChooseLanguage extends React.Component {
     }
 
   static navigationOptions = {
-    title: 'Choose Language'
+    title: 'Choose Language',
+    headerLeft: null
   }
 
   signOut = navigation => {

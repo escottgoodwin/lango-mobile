@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { View, ScrollView, TouchableOpacity } from 'react-native'
+import { View, ScrollView, TouchableOpacity, Modal } from 'react-native'
 import { Text, Button, Icon, Container } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid'
 import { Flag } from 'react-native-svg-flagkit'
@@ -29,7 +29,13 @@ class PlayArticle extends Component{
     speed1:true,
     speed66:false,
     speed75:false,
-    speed50:false
+    speed50:false,
+    orig_text:'',
+    orig_lang:'',
+    trans_text:'',
+    trans_lang:'',
+    transPlaying:false,
+    modalVisible:false
   }
 
   componentDidMount = async () => {
@@ -51,8 +57,20 @@ class PlayArticle extends Component{
     })
 
     Tts.addEventListener('tts-start', (event) => this.setState({playing:true}));
-    Tts.addEventListener('tts-finish', (event) => this.nextSent(sents));
+    Tts.addEventListener('tts-finish', (event) => this.finishSpeaking(sents));
     Tts.addEventListener('tts-cancel', (event) => this.setState({playing:false}));
+  }
+
+  finishSpeaking = sents => { 
+    const { transPlaying, orig_text, orig_lang } = this.state
+    if (transPlaying){
+      
+      this.playTrans(orig_text,orig_lang)
+      this.setState({modalVisible:false, transPlaying:false})
+
+    } else {
+      this.nextSent(sents)
+    }
   }
 
   nextSent = sents => {
@@ -92,23 +110,24 @@ class PlayArticle extends Component{
 
     const { orig_text, trans_text, orig_lang, trans_lang } = result.data.data.translateSentence
 
-    const origVoice = voicify(orig_lang)
     const transVoice = voicify(trans_lang)
 
-    Tts.stop()
-    this.play(orig_text)
+    this.setState({modalVisible: true, transPlaying: true, orig_text, orig_lang, trans_text, trans_lang})
 
-    Tts.stop()
-    Tts.setDefaultLanguage(transVoice)
-    this.play(trans_text)
-
-    Tts.setDefaultLanguage(origVoice)
+    this.playTrans(trans_text, trans_lang)
 
   }
 
   play = article => {
     Tts.speak(article)
     this.setState({started:true})
+  }
+
+  playTrans = (text,lang) => {
+    Tts.stop()
+    const voice = voicify(lang)
+    Tts.setDefaultLanguage(voice)
+    Tts.speak(text)
   }
 
   pause = () => {
@@ -166,6 +185,11 @@ class PlayArticle extends Component{
     this.setState({playing:false})
   }
 
+  stopTranslation = () =>{
+    this.sets({modalVisible:false})
+    Tts.resume()
+  }
+
   componentWillUnmount(){
     Tts.stop()
     Tts.removeEventListener('tts-start');
@@ -175,12 +199,41 @@ class PlayArticle extends Component{
 
   render(){
 
-    const { currSent, token, started, playing, speed1, speed50, speed66, speed75 } = this.state
+    const { currSent, token, started, playing, speed1, speed50, speed66, speed75, orig_text, trans_text, modalVisible } = this.state
 
     const { art_id, article, title, lang, navigation } = this.props
 
     return(
+      <>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>
+        <Container style={{backgroundColor:'#F4F3EF'}}>
+        <ScrollView>
+          <View style={{marginTop:50}}>
+          <Text style={{display: 'flex', fontSize:24, margin: 20}}>Translation</Text>
+            
+            <View style={{margin: 20}}>
+              <Text style={{fontSize:22,color:'green'}}>{orig_text}</Text> 
+              <Text style={{fontSize:22,color:'blue'}}>{trans_text}</Text>
+            </View>
+          </View>
+          </ScrollView>
+          <View style={{height:60}}>
+          <Button style={{marginLeft:20, marginRight:20}} onPress={() => this.setState({modalVisible:false})}>
+            <Text>Close</Text>
+          </Button>
+        </View>
+        
+        </Container>
+      </Modal>
       <Container style={{backgroundColor:'#F4F3EF'}} >
+        
+
           <Grid>
           <Row style={{height:70}}>
             <Col >
@@ -263,6 +316,7 @@ class PlayArticle extends Component{
 
           </Grid>
           </Container>
+          </>
     )
   }
 

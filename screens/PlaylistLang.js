@@ -50,7 +50,7 @@ class PlaylistLang extends React.Component {
               </View>
 
               <View style={{padding:15}}>
-                <Button  block success onPress={() => navigation.navigate('PlayLangList', { lang })}  >
+                <Button block success onPress={() => navigation.navigate('PlayListPlay',{ playList: playListLang })}  >
                   <Text>Play</Text>
                 </Button>
               </View>

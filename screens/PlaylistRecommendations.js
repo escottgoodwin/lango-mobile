@@ -26,7 +26,6 @@ class PlaylistRecommendations extends React.Component {
 
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
-      
 
       <Query query={PLAYLIST_QUERY}
             fetchPolicy={'cache-and-network'}
