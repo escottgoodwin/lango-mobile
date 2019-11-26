@@ -87,23 +87,14 @@ const ArtRecHistory = ({art_id, lang, date, title, playlist, searchDate, props})
 }
 
 _error = async error => {
+    const jsonError = JSON.stringify(error)
+    Toast.show({
+      text: jsonError,
+      buttonText: 'Okay',
+      duration: 3000,
+      type: "danger"
+    })
 
-    const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-
-    error.networkError &&
-        Toast.show({
-            text: error.networkError.message,
-            buttonText: 'Okay',
-            duration: 3000,
-            type: "danger"
-        })
- 
-      Toast.show({
-        text: gerrorMessage,
-        buttonText: 'Okay',
-        duration: 3000,
-        type: "danger"
-      })
 }
 
 

@@ -11,6 +11,7 @@ import { Query, Mutation } from "react-apollo"
 import  { ARTICLE_QUERY, TRANSLATION_MUTATION } from '../ApolloQueries'
 
 import Loading from './Loading'
+import Error from './Error'
 import SelectableText from './SelectableText'
 
 class Article extends React.Component {
@@ -86,21 +87,21 @@ class Article extends React.Component {
   }
 
  render() {
-
+  const art_id1 = ''
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const { language, flag_lang } = langSwitch(lang)
   const flaglang = flag_lang.toUpperCase()
   const art_id = navigation.getParam('art_id', 'NO-ID')
-  const { playing, started, modalVisible, orig_text, trans_text, errorMsg, selText } = this.state
+  const { modalVisible, orig_text, trans_text, errorMsg, selText } = this.state
 
     return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       
-        <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
+        <Query query={ARTICLE_QUERY} variables={{ artId: art_id1, lang }} >
             {({ loading, error, data }) => {
                 if (loading) return <Loading />
-                if (error) return <View><Text>{JSON.stringify(error)}</Text></View>
+                if (error) return <Error error={error} />
 
                 const { article, title, date, translations } = data.article
               
@@ -279,18 +280,21 @@ class Article extends React.Component {
 
   }
 
-  _confirm = (data) => {
-    console.log(data)
+  _confirm = data => {
     const { orig_text, trans_text } = data.translation
      this.setState({orig_text, trans_text})
      this.setState({selText:''})
      this.setState({errorMsg:''})
     }
 
-  _error = async error => {
-
-      console.log(error)
-
+  _error = error => {
+      const jsonError = JSON.stringify(error)
+      Toast.show({
+        text: jsonError,
+        buttonText: 'Okay',
+        duration: 3000,
+        type: "danger"
+      })
   }
 
   

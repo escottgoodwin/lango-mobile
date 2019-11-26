@@ -1,34 +1,18 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 
- const Error = (props) =>
+ const Error = ({error}) =>
 
-      <View style={styles.container}>
-
-      <Text style={{fontSize:16}}>
-      Something has gone wrong!
-      </Text>
-
-      <View style={{padding:15}}>
-      {props.graphQLErrors !== "undefined" &&
-        props.graphQLErrors.map(error => <Text key={error.message} style={{color:'red',fontSize:16}}>{error.message}</Text>)}
-      </View>
-
-      <View style={{padding:15}}>
-      {props.networkError !== null &&
-        <Text key={props.networkError.message} style={{color:'red',fontSize:16}}>{props.networkError.message}</Text>}
-      </View>
-
-      </View>
-
+    <View style={styles.container}>
+      <Text>{JSON.stringify(error)}</Text>
+    </View>
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding:25
-  }
+container: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center'
+}
 })
 
 export default Error

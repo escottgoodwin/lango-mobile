@@ -2,7 +2,7 @@ import React from 'react'
 import TouchID from 'react-native-touch-id';
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-community/async-storage';
-import { TouchableOpacity, KeyboardAvoidingView, StyleSheet, ImageBackground } from 'react-native'
+import { TouchableOpacity, KeyboardAvoidingView, StyleSheet, ImageBackground, Image } from 'react-native'
 import { withApollo } from "react-apollo"
 import firebase from 'react-native-firebase'
 import { AccessToken, LoginManager } from 'react-native-fbsdk';
@@ -39,22 +39,11 @@ const processLogin = async (uid,props) => {
 class SignIn extends React.Component {
 
   componentDidMount = async () => {
-        //const fcmToken = await firebase.messaging().getToken()
-        //const credentials =  await Keychain.getGenericPassword()
-        //if (!credentials.username) {
-        //  this.setState({touchId:false})
-        //}
-        //this.setState({pushToken:fcmToken})
-        //this.setState({email:'',password:''})
-        //this.props.navigation.navigate('StudentDashboard')
-        //const { history } = this.props
+
         this.setState({email:'',password:''})
         firebase.auth().onAuthStateChanged(function(user) {
          if (user) {
-           
-            //this.props.navigation.navigate('StudentDashboard')
           } else {
-          
         }
         })
         
@@ -202,7 +191,10 @@ class SignIn extends React.Component {
         }} >
         <CardItem bordered >
 
-          <Text style={{color:'#3A7891',fontSize:24}}>Langa Learn</Text>
+        <Image
+        style={{width:'50%'}}
+          source={require('../assets/langalogo.png')}
+        />
 
         </CardItem>
 
