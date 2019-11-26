@@ -7,7 +7,7 @@ import { langSwitch } from '../utils'
 import { Query } from "react-apollo"
 import  { PLAYLIST_LANG_QUERY } from '../ApolloQueries'
 
-import ArtRec from '../components/ArtRec'
+import ArtRecPlaylistLang from '../components/ArtRecPlaylistLang'
 import Loading from './Loading'
 
 class PlaylistLang extends React.Component {
@@ -59,7 +59,7 @@ class PlaylistLang extends React.Component {
                 data={playListLang}
                 renderItem={
                   ({ item }) => (
-                    <ArtRec {...item} props={this.props}/>
+                    <ArtRecPlaylistLang {...item} props={this.props}/>
                   )
                 }
                 keyExtractor={item => item.art_id}

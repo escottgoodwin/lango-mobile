@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native'
 import { Text, Button } from 'native-base';
 import { container } from '../css'
-import ArtRec from '../components/ArtRec'
+import ArtRecPlaylist from '../components/ArtRecPlaylist'
 import Loading from './Loading'
 
 import { Query, } from "react-apollo"
@@ -55,7 +55,7 @@ class PlaylistRecommendations extends React.Component {
                 data={playList}
                 renderItem={
                   ({ item }) => (
-                    <ArtRec {...item} props={this.props}/>
+                    <ArtRecPlaylist {...item} props={this.props}/>
                   )
                 }
                 keyExtractor={item => item.art_id}

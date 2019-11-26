@@ -1,25 +1,18 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native'
-import { Query, } from "react-apollo"
-import { container } from '../css'
-import moment from 'moment'
-import { Flag } from 'react-native-svg-flagkit'
-import ArtRec from '../components/ArtRec'
 import { Col, Row, Grid } from 'react-native-easy-grid'
-import  { ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
-import { langSwitch } from '../utils'
+import { container } from '../css'
+import { Flag } from 'react-native-svg-flagkit'
+import moment from 'moment'
+import { langSwitch, sortDate } from '../utils'
 
+import { Query, } from "react-apollo"
+import  { ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
+
+import ArtRecHistory from '../components/ArtRecHistory'
 import Loading from './Loading'
 
 class HistoryRecommendations extends React.Component {
-
-    state = {
-      date:null,
-      graphQLError: '',
-      isVisibleGraph:false,
-      networkError:'',
-      isVisibleNet:false,
-    }
 
   static navigationOptions = {
     title: 'History Recommendations'
@@ -29,7 +22,6 @@ class HistoryRecommendations extends React.Component {
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const date = navigation.getParam('date', 'NO-ID')
-  const { user, graphQLError, networkError, isVisibleNet, isVisibleGraph } = this.state
   const { language, flag_lang } = langSwitch(lang)
   const flaglang = flag_lang.toUpperCase()
   return (
@@ -44,7 +36,8 @@ class HistoryRecommendations extends React.Component {
               if (error) return <View><Text>{JSON.stringify(error)}</Text></View>
 
             const { articleRecommendationsHistory } = data
- 
+            const artRecsSorted = sortDate(articleRecommendationsHistory)
+
             return (
               <>
               
@@ -65,7 +58,7 @@ class HistoryRecommendations extends React.Component {
 
                     <View>
                     <Text style={{fontSize:18}}>
-                       {articleRecommendationsHistory.length} {language} Recommendations
+                       {artRecsSorted.length} {language} Recommendations
                     </Text>
                   </View>
                     </Col>
@@ -75,10 +68,10 @@ class HistoryRecommendations extends React.Component {
                 </Grid>
                 
               <FlatList
-                data={articleRecommendationsHistory}
+                data={artRecsSorted}
                 renderItem={
                   ({ item }) => (
-                    <ArtRec {...item} props={this.props}/>
+                    <ArtRecHistory {...item} searchDate={date} props={this.props}/>
                   )
                 }
                 keyExtractor={item => item.art_id}
@@ -94,15 +87,6 @@ class HistoryRecommendations extends React.Component {
 
   }
 
-  _error = async error => {
-
-      const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-      this.setState({ isVisibleGraph: true, graphQLError: gerrorMessage})
-
-      error.networkError &&
-        this.setState({ isVisibleNet: true, networkError: error.networkError.message})
-
-  }
 }
 
 

@@ -4,21 +4,12 @@ import { container } from '../css'
 import { Flag } from 'react-native-svg-flagkit'
 import ArtRec from '../components/ArtRec'
 import { Col, Row, Grid } from 'react-native-easy-grid'
-import { langSwitch } from '../utils'
+import { langSwitch, sortDate } from '../utils'
 
 import { Query } from "react-apollo"
 import  { ARTICLE_REC_ALL_QUERY } from '../ApolloQueries'
 
 import Loading from './Loading'
-
-function sortDate(array){
-
-  return array.sort(function(a, b) {
-    a = new Date(a.date);
-    b = new Date(b.date);
-    return a>b ? -1 : a<b ? 1 : 0;
-  })
-}
 
 class CurrentRecommendations extends React.Component {
 

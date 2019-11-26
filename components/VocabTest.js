@@ -1,16 +1,13 @@
 import React,{Component} from "react"
 import Icon from 'react-native-vector-icons/AntDesign'
 import { View, ScrollView } from 'react-native'
-import { Text, Button, Input, Toast, Container, Item } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid'
+import { Text, Button, Input, Toast, Item } from 'native-base';
+import { Col, Row } from 'react-native-easy-grid'
 import { Flag } from 'react-native-svg-flagkit'
 import AsyncStorage from '@react-native-community/async-storage';
+import { getRandomInt, langSwitch } from '../utils'
 
 import ArtAnswer from './ArtAnswer'
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
 
 class VocabTest extends Component{
 
@@ -35,21 +32,6 @@ class VocabTest extends Component{
     answereds:[]
   }
 
-  langSwitch = (native_lang) => {
-    if (native_lang === 'en'){
-      return {language:'English',flag_lang:'gb'}
-    }
-    if (native_lang === 'es'){
-      return {language:'Spanish',flag_lang:native_lang}
-    }
-    if (native_lang === 'fr'){
-      return {language:'French',flag_lang:native_lang}
-    }
-    if (native_lang === 'de'){
-      return {language:'German',flag_lang:native_lang}
-    }
-  }
-
   componentDidMount = async () => {
     const { vocab } = this.props
     this.setState({vocab})
@@ -58,8 +40,8 @@ class VocabTest extends Component{
     this.setState({newQuestion:newQuestion.orig_text, newAnswer:newQuestion.trans_text, trans_lang: newQuestion.orig_lang,art_id:newQuestion.art_id})
     const user1 = await AsyncStorage.getItem('user')
     const { native_lang } = JSON.parse(user1)
-    const nativeLang = this.langSwitch(native_lang)
-    const orig_lang = this.langSwitch(newQuestion['orig_lang'])
+    const nativeLang = langSwitch(native_lang)
+    const orig_lang = langSwitch(newQuestion['orig_lang'])
     const native_flag = nativeLang.flag_lang.toUpperCase()
     const trans_flag = orig_lang.flag_lang.toUpperCase()
 
@@ -117,7 +99,7 @@ class VocabTest extends Component{
     const rnd = getRandomInt(newVocab.length)
     const newQuestion = newVocab[rnd]
 
-    const { flag_lang } = this.langSwitch(newQuestion['orig_lang'])
+    const { flag_lang } = langSwitch(newQuestion['orig_lang'])
 
     this.setState({
         newQuestion: newQuestion['orig_text'], 
@@ -148,7 +130,6 @@ class VocabTest extends Component{
       const lang = ''
 
       const { navigation } = this.props
-      console.log(native_flag,trans_flag)
 
     return(
 

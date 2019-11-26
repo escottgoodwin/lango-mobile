@@ -1,8 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, ScrollView} from 'react-native';
 
-import ButtonColor from '../components/ButtonColor'
-
 export default class Welcome extends React.Component {
 
   static navigationOptions = {
@@ -25,12 +23,6 @@ export default class Welcome extends React.Component {
           <Text style={styles.welcome}>
             Practice vocabulary.
           </Text>
-
-          <ButtonColor
-          title="Sign In"
-          backgroundcolor="#003366"
-          onpress={() => this.props.navigation.navigate("SignIn")}
-          />
 
       </ScrollView>
     );

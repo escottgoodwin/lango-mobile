@@ -14,7 +14,6 @@ class PlayListPlay1 extends React.Component {
     title: 'Play Article'
   }
 
-
   nextArticle = () => {
     const { navigation } = this.props
     const art_id = navigation.getParam('art_id', 'NO-ID')

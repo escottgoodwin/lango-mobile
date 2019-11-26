@@ -6,16 +6,9 @@ import { Flag } from 'react-native-svg-flagkit'
 import Tts from 'react-native-tts';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
+import { voicify, splitSentence } from '../utils'
 
 import { TRANSLATE_SENTENCE_MUTATION } from '../ApolloQueries'
-
-const splitSentence = text => {
-  return text.match( /[^\.!\?]+[\.!\?]+|[^\.!\?]+/g )
-}
-
-const voicify = lang => { 
-  return lang + '-' + lang.toUpperCase()
-}
 
 class PlayArticle extends Component{
 

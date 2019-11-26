@@ -1,13 +1,8 @@
 import React from 'react'
-import { StyleSheet, View, ScrollView } from 'react-native'
+import { StyleSheet, ScrollView } from 'react-native'
 import { container } from '../css'
-import { Col, Row } from 'react-native-easy-grid'
-
-import { Query } from "react-apollo"
-import { PLAYLIST_QUERY } from '../ApolloQueries'
 
 import PlayListPlay from '../components/PlayListPlay'
-import Loading from './Loading'
 
 class PlayPlayList extends React.Component {
 
