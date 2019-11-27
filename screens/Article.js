@@ -87,7 +87,6 @@ class Article extends React.Component {
   }
 
  render() {
-  const art_id1 = ''
   const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const { language, flag_lang } = langSwitch(lang)
@@ -98,7 +97,7 @@ class Article extends React.Component {
     return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       
-        <Query query={ARTICLE_QUERY} variables={{ artId: art_id1, lang }} >
+        <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
             {({ loading, error, data }) => {
                 if (loading) return <Loading />
                 if (error) return <Error error={error} />
@@ -287,14 +286,13 @@ class Article extends React.Component {
      this.setState({errorMsg:''})
     }
 
-  _error = error => {
-      const jsonError = JSON.stringify(error)
-      Toast.show({
-        text: jsonError,
+  _error = async error => {
+    Toast.show({
+        text: error.message,
         buttonText: 'Okay',
         duration: 3000,
         type: "danger"
-      })
+    })
   }
 
   

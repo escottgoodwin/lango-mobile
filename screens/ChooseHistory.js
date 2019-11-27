@@ -101,15 +101,6 @@ class ChooseHistory extends React.Component {
 
   }
 
-  _error = async error => {
-
-      const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-      this.setState({ isVisibleGraph: true, graphQLError: gerrorMessage})
-
-      error.networkError &&
-        this.setState({ isVisibleNet: true, networkError: error.networkError.message})
-
-  }
 }
 
 

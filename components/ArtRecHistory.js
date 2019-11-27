@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text,  View, TouchableOpacity } from 'react-native'
 import { Col, Row } from 'react-native-easy-grid'
-import { Button } from 'native-base';
+import { Button, Toast } from 'native-base';
 import moment from 'moment'
 
 import { Mutation } from "react-apollo"
@@ -20,6 +20,7 @@ const ArtRecHistory = ({art_id, lang, date, title, playlist, searchDate, props})
                     mutation={REMOVE_PLAYLIST_MUTATION}
                     variables={{ art_id }}
                     onError={error => this._error (error)}
+                    onCompleted={data => this._confirm(data.removeFromPlaylist.message)}
                     refetchQueries={() => {
                         return [{
                         query: ARTICLE_REC_DATE_QUERY,
@@ -42,6 +43,7 @@ const ArtRecHistory = ({art_id, lang, date, title, playlist, searchDate, props})
                     mutation={ADD_PLAYLIST_MUTATION}
                     variables={{ art_id }}
                     onError={error => this._error (error)}
+                    onCompleted={data => this._confirm(data.addToPlaylist.message)}
                     refetchQueries={() => {
                         return [{
                         query: ARTICLE_REC_DATE_QUERY,
@@ -87,15 +89,21 @@ const ArtRecHistory = ({art_id, lang, date, title, playlist, searchDate, props})
 }
 
 _error = async error => {
-    const jsonError = JSON.stringify(error)
     Toast.show({
-      text: jsonError,
-      buttonText: 'Okay',
-      duration: 3000,
-      type: "danger"
+        text: error.message,
+        buttonText: 'Okay',
+        duration: 3000,
+        type: "danger"
     })
-
 }
 
+_confirm = async message => {
+    Toast.show({
+        text: message,
+        buttonText: 'Okay',
+        duration: 3000,
+        type: "success"
+    })
+}
 
 export default ArtRecHistory

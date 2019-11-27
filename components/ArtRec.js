@@ -1,14 +1,15 @@
 import React from 'react'
-import { Text,  View, TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity } from 'react-native'
 import moment from 'moment'
-import { Col, Row, Grid } from 'react-native-easy-grid'
-import { Button } from 'native-base';
+import { Col, Row } from 'react-native-easy-grid'
+import { Button, Toast } from 'native-base';
 
 import { Mutation } from "react-apollo"
 import  { ADD_PLAYLIST_MUTATION, REMOVE_PLAYLIST_MUTATION, ARTICLE_REC_ALL_QUERY } from '../ApolloQueries'
 
-const ArtRec = ({art_id, lang, date, title, playlist, props}) => 
-<>
+const ArtRec = ({art_id, lang, date, title, playlist, props}) => {
+    return(
+    <>
     <Row>
 
         <Col size={15}>
@@ -18,6 +19,8 @@ const ArtRec = ({art_id, lang, date, title, playlist, props}) =>
             <Mutation
             mutation={REMOVE_PLAYLIST_MUTATION}
             variables={{ art_id }}
+            onError={error => this._error (error)}
+            onCompleted={data => this._confirm(data.removeFromPlaylist.message)}
             refetchQueries={() => {
                 return [{
                 query: ARTICLE_REC_ALL_QUERY,
@@ -33,12 +36,14 @@ const ArtRec = ({art_id, lang, date, title, playlist, props}) =>
                 </Button>
             )}
             </Mutation>
-            
+
             :
 
             <Mutation
             mutation={ADD_PLAYLIST_MUTATION}
             variables={{ art_id }}
+            onError={error => this._error (error)}
+            onCompleted={data => this._confirm(data.addToPlaylist.message)}
             refetchQueries={() => {
                 return [{
                 query: ARTICLE_REC_ALL_QUERY,
@@ -61,24 +66,45 @@ const ArtRec = ({art_id, lang, date, title, playlist, props}) =>
         <Col size={85}>
 
         <TouchableOpacity style={{marginLeft:5}} onPress={() => props.navigation.navigate('Article',{ art_id, lang })}>
-        <Text style={{fontSize:12,marginBottom:3}} >
-            {moment(date).format('MMMM Do YYYY')}
-        </Text>
-        <Text style={{fontSize:16,marginBottom:3,color:'#3A7891'}} >
-            {title}
-        </Text>
-    </TouchableOpacity>
+            <Text style={{fontSize:12,marginBottom:3}} >
+                {moment(date).format('MMMM Do YYYY')}
+            </Text>
+            <Text style={{fontSize:16,marginBottom:3,color:'#3A7891'}} >
+                {title}
+            </Text>
+        </TouchableOpacity>
         
         </Col>
 
-    </Row>    
-    <View
-    style={{
-      borderBottomColor: 'grey',
-      borderBottomWidth: 1,
-      margin: 5
-    }}
-  />
-</>   
+        </Row>    
+        <View
+        style={{
+        borderBottomColor: 'grey',
+        borderBottomWidth: 1,
+        margin: 5
+        }}
+    />
+    </>  
+  )
+}
+
+_error = async error => {
+    Toast.show({
+        text: error.message,
+        buttonText: 'Okay',
+        duration: 3000,
+        type: "danger"
+    })
+}
+
+_confirm = async message => {
+    Toast.show({
+        text: message,
+        buttonText: 'Okay',
+        duration: 3000,
+        type: "success"
+    })
+}
+
 
 export default ArtRec

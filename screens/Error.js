@@ -6,9 +6,25 @@ import { Icon } from 'native-base';
 
     <View style={styles.container}>
       <View style={{backgroundColor:'#d9534f',width:'80%',padding:20,borderRadius:5}}>
-        <Icon name='md-warning' style={{color:'white',margin:20}}/>
-        <Text style={{color:'white',fontSize:36,margin:20}}>Error!</Text>
-        <Text style={{color:'white',fontSize:24}}>{error.graphQLErrors[0].message}</Text>
+      
+      <View style={{alignItems: 'center'}}>
+        <Icon name='md-warning' style={{color:'white'}}/>
+      </View>
+
+      <View style={{ alignItems: 'center' }}>
+        <Text style={{color:'white',fontSize:36}}>Error!</Text>
+      </View>
+
+      <View
+        style={{
+          borderBottomColor: 'white',
+          borderBottomWidth: 1,
+          margin: 5
+        }}
+      />
+
+      <Text style={{color:'white',fontSize:24}}>{error.graphQLErrors[0].message}</Text>
+
       </View>
     </View>
 

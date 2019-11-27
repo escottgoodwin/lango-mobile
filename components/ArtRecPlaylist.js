@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text,  View, TouchableOpacity } from 'react-native'
 import { Col, Row } from 'react-native-easy-grid'
-import { Button } from 'native-base';
+import { Button, Toast } from 'native-base';
 import moment from 'moment'
 
 import { Mutation } from "react-apollo"
@@ -9,7 +9,7 @@ import  { REMOVE_PLAYLIST_MUTATION, PLAYLIST_QUERY } from '../ApolloQueries'
 
 const ArtRecPlaylist = ({art_id, lang, date, title, props}) => {
     return(
-        <>
+    <>
         <Row>
 
             <Col size={15}>
@@ -18,6 +18,7 @@ const ArtRecPlaylist = ({art_id, lang, date, title, props}) => {
                 mutation={REMOVE_PLAYLIST_MUTATION}
                 variables={{ art_id }}
                 onError={error => this._error (error)}
+                onCompleted={data => this._confirm(data.removeFromPlaylist.message)}
                 refetchQueries={() => {
                     return [{
                     query: PLAYLIST_QUERY,
@@ -54,24 +55,23 @@ const ArtRecPlaylist = ({art_id, lang, date, title, props}) => {
     )  
 }
 
+
 _error = async error => {
-
-    const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-
-    error.networkError &&
-        Toast.show({
-            text: error.networkError.message,
-            buttonText: 'Okay',
-            duration: 3000,
-            type: "danger"
-        })
- 
-      Toast.show({
-        text: gerrorMessage,
+    Toast.show({
+        text: error.message,
         buttonText: 'Okay',
         duration: 3000,
         type: "danger"
-      })
+    })
+}
+
+_confirm = async message => {
+    Toast.show({
+        text: message,
+        buttonText: 'Okay',
+        duration: 3000,
+        type: "success"
+    })
 }
 
 

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { container } from '../css'
 import firebase from 'react-native-firebase'
 import axios from 'axios'
-import { Text, Button } from 'native-base';
+import { Text, Button, Toast } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid'
 import LangChoice from '../components/LangChoice'
 
@@ -20,7 +20,7 @@ import  { LOGOUT_MUTATION } from '../ApolloQueries'
 class ChooseLanguage extends React.Component {
 
     state = {
-      user: '',
+      uid: '',
       name:'',
       en_rec:false,
       fr_rec:false,
@@ -33,29 +33,47 @@ class ChooseLanguage extends React.Component {
     headerLeft: null
   }
 
-  signOut = navigation => {
+  signOut = async navigation => {
     firebase.auth().signOut().then(function() {
       
 
     }).catch(function(error) {
-      console.log(error)
+      Toast.show({
+        text: 'Logout error',
+        buttonText: 'Okay',
+        duration: 3000,
+        type: "danger"
+      })
     })
-  
-      const {uid} = this.state
+      const uid = ''
+      const token = await AsyncStorage.getItem('auth_token')
       removeToken()
-      const result = axios({
+
+      axios({
         
         url: 'https://us-central1-langolearn.cloudfunctions.net/api',
         method: 'post',
+        headers: { 'Authorization': token },
         data: {
             query: LOGOUT_MUTATION,
             variables: { uid }
         }
       }).then((result) => {
-          return result
+        const { message } = result.data.data.logout
+        Toast.show({
+          text: message,
+          buttonText: 'Okay',
+          duration: 3000,
+          type: "success"
+        })
       })
       .catch(function(error) {
-        console.log(error)
+        Toast.show({
+          text: error.message,
+          buttonText: 'Okay',
+          duration: 3000,
+          type: "danger"
+      })
       })
 
       navigation.navigate('SignIn')
@@ -63,7 +81,6 @@ class ChooseLanguage extends React.Component {
 
   componentDidMount = async () => {
     const user1 = await AsyncStorage.getItem('user')
-    console.log(user1)
     const user = JSON.parse(user1)
     const { name, en_rec, de_rec, fr_rec, es_rec } = user
     this.setState({name, en_rec, de_rec, fr_rec, es_rec})
@@ -132,17 +149,7 @@ class ChooseLanguage extends React.Component {
 
   }
 
-  _error = async error => {
-
-      const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-      this.setState({ isVisibleGraph: true, graphQLError: gerrorMessage})
-
-      error.networkError &&
-        this.setState({ isVisibleNet: true, networkError: error.networkError.message})
-
-  }
 }
-
 
 const styles = StyleSheet.create({
   container
