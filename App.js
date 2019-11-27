@@ -18,7 +18,6 @@ import SignIn from './screens/SignIn'
 import CurrentRecommendations from './screens/CurrentRecommendations'
 import Article from './screens/Article'
 import NewQuestionModal from './components/NewQuestionModal'
-import Welcome from './screens/Welcome'
 import ChooseLanguage from './screens/ChooseLanguage'
 import VocabQuiz from './screens/VocabQuiz'
 import LangDashboard from './screens/LangDashboard'
@@ -61,7 +60,6 @@ const MainStack = createStackNavigator(
   {
     SignIn: SignIn,
     CurrentRecommendations: CurrentRecommendations,
-    Welcome: Welcome,
     Article: Article,
     ChooseLanguage: ChooseLanguage,
     HistoryRecommendations: HistoryRecommendations,

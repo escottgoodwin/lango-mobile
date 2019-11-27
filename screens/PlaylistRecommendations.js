@@ -2,20 +2,15 @@ import React from 'react'
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native'
 import { Text, Button } from 'native-base';
 import { container } from '../css'
-import ArtRecPlaylist from '../components/ArtRecPlaylist'
-import Loading from './Loading'
 
-import { Query, } from "react-apollo"
+import { Query } from "react-apollo"
 import  { PLAYLIST_QUERY } from '../ApolloQueries'
 
-class PlaylistRecommendations extends React.Component {
+import ArtRecPlaylist from '../components/ArtRecPlaylist'
+import Loading from './Loading'
+import Error from './Error'
 
-    state = {
-      graphQLError: '',
-      isVisibleGraph:false,
-      networkError:'',
-      isVisibleNet:false,
-    }
+class PlaylistRecommendations extends React.Component {
 
   static navigationOptions = {
     title: 'Playlist',
@@ -32,7 +27,7 @@ class PlaylistRecommendations extends React.Component {
           >
           {({ loading, error, data }) => {
           if (loading) return <Loading />
-          if (error) return <div>{JSON.stringify(error)}</div>
+          if (error) return <Error error={error} />
 
           const { playList } = data
 
@@ -78,18 +73,7 @@ class PlaylistRecommendations extends React.Component {
     )
 
   }
-
-  _error = async error => {
-
-      const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-      this.setState({ isVisibleGraph: true, graphQLError: gerrorMessage})
-
-      error.networkError &&
-        this.setState({ isVisibleNet: true, networkError: error.networkError.message})
-
-  }
 }
-
 
 const styles = StyleSheet.create({
   container

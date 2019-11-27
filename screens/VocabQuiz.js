@@ -1,6 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, ScrollView } from 'react-native'
-import { container } from '../css'
+import { View, ScrollView } from 'react-native'
 import { Col, Row } from 'react-native-easy-grid'
 
 import { Query } from "react-apollo"
@@ -8,6 +7,7 @@ import { VOCAB_QUERY } from '../ApolloQueries'
 
 import VocabTest from '../components/VocabTest'
 import Loading from './Loading'
+import Error from './Error'
 
 class VocabQuiz extends React.Component {
 
@@ -26,7 +26,7 @@ class VocabQuiz extends React.Component {
             fetchPolicy={"network-only"}>
             {({ loading, error, data }) => {
                 if (loading) return <Loading />
-                if (error) return <div>{JSON.stringify(error)}</div>
+                if (error) return <Error error={error} />
 
             const { translations } = data
                  
@@ -56,12 +56,5 @@ class VocabQuiz extends React.Component {
   }
 
   }
-
-
-
-
-const styles = StyleSheet.create({
-  container
-})
 
 export default VocabQuiz

@@ -9,15 +9,9 @@ import  { PLAYLIST_LANG_QUERY } from '../ApolloQueries'
 
 import ArtRecPlaylistLang from '../components/ArtRecPlaylistLang'
 import Loading from './Loading'
+import Error from './Error'
 
 class PlaylistLang extends React.Component {
-
-    state = {
-      graphQLError: '',
-      isVisibleGraph:false,
-      networkError:'',
-      isVisibleNet:false,
-    }
 
   static navigationOptions = {
     title: 'Playlist'
@@ -37,7 +31,7 @@ class PlaylistLang extends React.Component {
           >
           {({ loading, error, data }) => {
           if (loading) return <Loading />
-          if (error) return <div>{JSON.stringify(error)}</div>
+          if (error) return <Error error={error} />
 
           const { playListLang } = data
 
@@ -82,15 +76,6 @@ class PlaylistLang extends React.Component {
 
   }
 
-  _error = async error => {
-
-      const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-      this.setState({ isVisibleGraph: true, graphQLError: gerrorMessage})
-
-      error.networkError &&
-        this.setState({ isVisibleNet: true, networkError: error.networkError.message})
-
-  }
 }
 
 

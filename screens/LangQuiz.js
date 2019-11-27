@@ -8,6 +8,7 @@ import { VOCAB_QUERY } from '../ApolloQueries'
 
 import LangVocabTest from '../components/LangVocabTest'
 import Loading from './Loading'
+import Error from './Error'
 
 class LangQuiz extends React.Component {
 
@@ -26,7 +27,7 @@ class LangQuiz extends React.Component {
             fetchPolicy={"network-only"}>
             {({ loading, error, data }) => {
                 if (loading) return <Loading />
-                if (error) return <div>{JSON.stringify(error)}</div>
+                if (error) return <Error error={error} />
 
             const { translations } = data
                  

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, ScrollView } from 'react-native'
+import { Text, View } from 'react-native'
 import { Col, Row, Grid } from 'react-native-easy-grid'
 
 import { Query} from "react-apollo"
@@ -11,7 +11,7 @@ import Loading from './Loading'
 class PlayListPlay extends React.Component {
 
   nextArticle = () => {
-    const { navigation, nextArticle } = this.props
+    const { navigation } = this.props
     const playList = navigation.getParam('playList', 'NO-ID')
 
     playList.shift()

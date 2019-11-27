@@ -7,6 +7,7 @@ import  { ARTICLE_QUERY } from '../ApolloQueries'
 
 import PlayArticle from '../components/PlayArticle'
 import Loading from './Loading'
+import Error from './Error'
 
 class PlayListPlay1 extends React.Component {
 
@@ -30,7 +31,7 @@ class PlayListPlay1 extends React.Component {
           <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
             {({ loading, error, data }) => {
                 if (loading) return <Loading />
-                if (error) return <View><Text>{JSON.stringify(error)}</Text></View>
+                if (error) return <Error error={error} />
 
                 const { article } = data
             return (

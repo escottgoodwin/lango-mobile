@@ -11,6 +11,7 @@ import  { ARTICLE_REC_DATE_QUERY } from '../ApolloQueries'
 
 import ArtRecHistory from '../components/ArtRecHistory'
 import Loading from './Loading'
+import Error from './Error'
 
 class HistoryRecommendations extends React.Component {
 
@@ -33,7 +34,7 @@ class HistoryRecommendations extends React.Component {
               variables={{ lang, date }}  >
             {({ loading, error, data }) => {
               if (loading) return <Loading />
-              if (error) return <View><Text>{JSON.stringify(error)}</Text></View>
+              if (error) return <Error error={error} />
 
             const { articleRecommendationsHistory } = data
             const artRecsSorted = sortDate(articleRecommendationsHistory)
