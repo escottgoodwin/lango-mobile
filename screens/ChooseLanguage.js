@@ -1,21 +1,21 @@
 import React from 'react'
-import { StyleSheet, View, ScrollView } from 'react-native'
+import { View, ScrollView } from 'react-native'
+import { Text, Button, Toast } from 'native-base';
+import { Row, Col, Grid } from 'react-native-easy-grid'
 import AsyncStorage from '@react-native-community/async-storage';
-import { container } from '../css'
 import firebase from 'react-native-firebase'
 import axios from 'axios'
-import { Text, Button, Toast } from 'native-base';
-import { Row, Grid } from 'react-native-easy-grid'
-import LangChoice from '../components/LangChoice'
 
 import  { LOGOUT_MUTATION } from '../ApolloQueries'
 
-  const removeToken = async () => {
-    await AsyncStorage.removeItem('user')
-    await AsyncStorage.removeItem('auth_token')
+import LangChoice from '../components/LangChoice'
 
-    return 
-  }
+const removeToken = async () => {
+  await AsyncStorage.removeItem('user')
+  await AsyncStorage.removeItem('auth_token')
+
+  return 
+}
 
 class ChooseLanguage extends React.Component {
 
@@ -97,26 +97,15 @@ class ChooseLanguage extends React.Component {
         backgroundColor:'#F4F3EF',
         padding:'5%'}}>
           
-        <>       
+        <>     
         <View>
           <Text>
             Welcome {name}
           </Text>
         </View>
 
-        <View>
-          <Button  style={{width:'100%', backgroundColor:'#3A7891', marginTop:20}}  onPress={() => navigation.navigate('VocabQuiz')} >
-            <Text>Quiz</Text>
-          </Button>
-        </View>
-
-        <View>
-         <Button  style={{width:'100%', backgroundColor:'#3A7891', marginTop:20}}  onPress={() => navigation.navigate('PlaylistRecommendations')} >
-           <Text>Playlist</Text>
-         </Button>
-       </View>
         
-        <ScrollView style={{marginTop:10}}>
+        <ScrollView style={{marginTop:20}}>
 
           <Grid>
           <Row>
@@ -137,11 +126,25 @@ class ChooseLanguage extends React.Component {
         
         </>
 
-        <View style={{padding:15,alignItems:'center'}}>
-          <Button style={{backgroundColor:'#3A7891'}}  onPress={() => this.signOut(navigation)} >
-            <Text>Sign Out</Text>
-          </Button>
-        </View>
+        <Row>
+            <Col>
+              <Button style={{backgroundColor:'#3A7891', margin:10}}  onPress={() => navigation.navigate('VocabQuiz')} >
+                <Text>Quiz</Text>
+              </Button>
+            </Col>
+
+            <Col>
+              <Button  style={{backgroundColor:'#3A7891', margin:10}}  onPress={() => navigation.navigate('PlaylistRecommendations')} >
+                <Text>Playlist</Text>
+              </Button>
+            </Col>
+
+            <Col>
+              <Button style={{backgroundColor:'#3A7891', margin:10}}  onPress={() => this.signOut(navigation)} >
+                <Text>Sign Out</Text>
+              </Button>
+            </Col>
+          </Row>
        
         </View>
       </>
@@ -150,9 +153,5 @@ class ChooseLanguage extends React.Component {
   }
 
 }
-
-const styles = StyleSheet.create({
-  container
-})
 
 export default ChooseLanguage

@@ -9,43 +9,37 @@ import PlayArticle from '../components/PlayArticle'
 import Loading from './Loading'
 import Error from './Error'
 
-class PlayListPlay extends React.Component {
+const PlayListPlay = ({navigation}) => {
 
-  static navigationOptions = {
-    title: 'Playlist Article'
-  }
-
+  const playList = navigation.getParam('playList', 'NO-ID')
+  const { art_id, lang } = playList[0]
 
   nextArticle = () => {
-    const { navigation } = this.props
-    const playList = navigation.getParam('playList', 'NO-ID')
     playList.shift()
     navigation.navigate('PlayListPlay',{ playList })
   }
 
-  render(){
-    const { navigation } = this.props
-    const playList = navigation.getParam('playList', 'NO-ID')
-    const { art_id, lang } = playList[0]
   return (
 
-          <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
-            {({ loading, error, data }) => {
-                if (loading) return <Loading />
-                if (error) return <Error error={error} />
+        <Query query={ARTICLE_QUERY} variables={{ artId: art_id, lang }} >
+          {({ loading, error, data }) => {
+              if (loading) return <Loading />
+              if (error) return <Error error={error} />
 
-                const { article } = data
-            return (
-              
-              <PlayArticle nextArticle={this.nextArticle} lang={lang} {...article} navigation={navigation} />
+              const { article } = data
+          return (
+            
+            <PlayArticle nextArticle={nextArticle} lang={lang} {...article} navigation={navigation} />
 
-            )
-          }}
-        </Query>
+          )
+        }}
+      </Query>
 
     )
   }
 
-  }
+PlayListPlay.navigationOptions = {
+  title: 'Playlist Article'
+}
 
 export default PlayListPlay

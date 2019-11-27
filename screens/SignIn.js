@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import TouchID from 'react-native-touch-id';
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -13,7 +13,7 @@ import { Card, CardItem, Text, Button, Input, Icon, Toast } from 'native-base';
 
 import { LOGIN_MUTATION } from '../ApolloQueries'
 
-const processLogin = async (uid,props) => {
+const processLogin = async (uid, navigation) => {
   await AsyncStorage.setItem('uid', uid)
 
   const result = await axios({
@@ -28,23 +28,22 @@ const processLogin = async (uid,props) => {
   const { token, user } = result.data.data.login
   await AsyncStorage.setItem('auth_token', token)
   await AsyncStorage.setItem('user', JSON.stringify(user))
-  props.navigation.navigate('ChooseLanguage')
+  navigation.navigate('ChooseLanguage')
 }
 
-class SignIn extends React.Component {
+const SignIn = ({navigation}) => {
 
-  componentDidMount(){
-
-    this.setState({email:'',password:''})
-        
-  }
+  const [ email, setEmail ] = useState('')
+  const [ password, setPassword ] = useState('')
     
   emailSignIn = () => {
-    const { email, password } = this.state
-    this.setState({email:'',password:''})
+
+    setEmail('')
+    setPassword('')
+
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then(function(result) {
-      processLogin(result.user.uid,this.props)
+      processLogin(result.user.uid, navigation)
       Toast.show({
         text: 'Login Successful!',
         buttonText: 'Okay',
@@ -70,7 +69,7 @@ class SignIn extends React.Component {
         const {username, password } = credentials
         firebase.auth().signInWithEmailAndPassword(username, password)
     .then(function(result) {
-      processLogin(result.user.uid,this.props)
+      processLogin(result.user.uid, navigation)
       Toast.show({
         text: 'Login Successful!',
         buttonText: 'Okay',
@@ -125,7 +124,7 @@ class SignIn extends React.Component {
   
       const firebaseUserCredential = await firebase.auth().signInWithCredential(credential)
 
-      processLogin(firebaseUserCredential.user.uid, this.props)
+      processLogin(firebaseUserCredential.user.uid, navigation)
         Toast.show({
           text: 'Login Successful!',
           buttonText: 'Okay',
@@ -149,7 +148,7 @@ class SignIn extends React.Component {
       const data = await GoogleSignin.signIn();
       const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
       const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
-      processLogin(firebaseUserCredential.user.uid,this.props)
+      processLogin(firebaseUserCredential.user.uid, navigation)
       Toast.show({
         text: 'Login Successful!',
         buttonText: 'Okay',
@@ -178,7 +177,7 @@ class SignIn extends React.Component {
   
       const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
   
-      processLogin(firebaseUserCredential.user.uid,this.props)
+      processLogin(firebaseUserCredential.user.uid, navigation)
 
       Toast.show({
         text: 'Login Successful!',
@@ -196,22 +195,6 @@ class SignIn extends React.Component {
     }
     
   }
-
-
-  static navigationOptions = {
-    title: 'Sign In',
-  }
-
-     state = {
-       email: '',
-       email1: '',
-       password: '',
-       touchId:true,
-     }
-
-  render() {
-
-    const { email, password } = this.state
 
     return (
       <ImageBackground source={require('../assets/loginmap1.jpg')} style={{width: '100%', height: '100%'}}>
@@ -236,15 +219,15 @@ class SignIn extends React.Component {
         </CardItem>
 
         <CardItem >
-          <TouchableOpacity onPress={() => this.googleLogin()} >
+          <TouchableOpacity onPress={() => googleLogin()} >
             <Icon  name='logo-google' style={{color:'#3A7891',margin:20}}/>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => this.facebookLogin()} >
+          <TouchableOpacity onPress={() => facebookLogin()} >
             <Icon name='logo-facebook' style={{color:'#3A7891',margin:20}}/>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => this.twitterLogin()} >
+          <TouchableOpacity onPress={() => twitterLogin()} >
             <Icon name='logo-twitter' style={{color:'#3A7891',margin:20}}/>
           </TouchableOpacity>
 
@@ -254,7 +237,7 @@ class SignIn extends React.Component {
        
           <Input
             placeholder='Email'
-            onChangeText={(text) => this.setState({email:text})}
+            onChangeText={(text) => setEmail(text)}
             value={email}
             autoCapitalize='none'
             keyboardType='email-address'
@@ -266,7 +249,7 @@ class SignIn extends React.Component {
 
         <Input
           placeholder='Password'
-          onChangeText={(text) => this.setState({password:text})}
+          onChangeText={(text) => setPassword(text)}
           value={password}
           autoCapitalize='none'
           secureTextEntry={true}
@@ -275,7 +258,7 @@ class SignIn extends React.Component {
       </CardItem>
 
       <CardItem>
-        <Button style={{backgroundColor:'#3A7891'}} onPress={() => this.emailSignIn()} >
+        <Button style={{backgroundColor:'#3A7891'}} onPress={() => emailSignIn()} >
           <Text>Login</Text>
         </Button>
       </CardItem>
@@ -287,6 +270,8 @@ class SignIn extends React.Component {
   )
 }
 
+SignIn.navigationOptions = {
+  title: 'Sign In',
 }
 
 export default withApollo(SignIn)

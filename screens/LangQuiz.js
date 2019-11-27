@@ -1,6 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, ScrollView } from 'react-native'
-import { container } from '../css'
+import { View, ScrollView } from 'react-native'
 import { Col, Row } from 'react-native-easy-grid'
 
 import { Query } from "react-apollo"
@@ -10,14 +9,7 @@ import LangVocabTest from '../components/LangVocabTest'
 import Loading from './Loading'
 import Error from './Error'
 
-class LangQuiz extends React.Component {
-
-  static navigationOptions = {
-    title: 'Vocabulary Quiz'
-  }
-
-  render(){
-    const { navigation } = this.props
+const LangQuiz = ({navigation}) => {
 
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
@@ -56,13 +48,8 @@ class LangQuiz extends React.Component {
     )
   }
 
-  }
-
-
-
-
-const styles = StyleSheet.create({
-  container
-})
+LangQuiz.navigationOptions = {
+  title: 'Vocabulary Quiz'
+}
 
 export default LangQuiz

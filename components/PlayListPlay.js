@@ -8,21 +8,19 @@ import  { ARTICLE_QUERY } from '../ApolloQueries'
 import PlayArticle from './PlayArticle'
 import Loading from './Loading'
 
-class PlayListPlay extends React.Component {
+const PlayListPlay = ({art_id, lang, navigation}) => {
+
+  const playList = navigation.getParam('playList', 'NO-ID')
+  const { art_id, lang } = playList[0]
 
   nextArticle = () => {
-    const { navigation } = this.props
-    const playList = navigation.getParam('playList', 'NO-ID')
 
     playList.shift()
     navigation.navigate('PlayListPlay',{ playList })
   
   }
 
-  render(){
-    const { navigation, art_id, lang } = this.props
-    const playList = navigation.getParam('playList', 'NO-ID')
-    const { art_id, lang } = playList[0]
+    
   return (
         
           <Grid>
@@ -47,8 +45,6 @@ class PlayListPlay extends React.Component {
           </Grid>
 
     )
-  }
-
   }
 
 export default PlayListPlay

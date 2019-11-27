@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ScrollView, Modal, TouchableOpacity } from 'react-native'
+import { View, ScrollView, Modal, TouchableOpacity, Linking } from 'react-native'
 import moment from 'moment'
 import Tts from 'react-native-tts';
 import { Button, Icon, Container, Text } from 'native-base';
@@ -52,6 +52,10 @@ class Article extends React.Component {
     
   }
 
+  openURL = (url) => {
+    Linking.openURL(url).catch((err) => console.error('An error occurred', err));
+  }
+
   play = article => {
     Tts.speak(article)
     this.setState({started:true})
@@ -102,7 +106,7 @@ class Article extends React.Component {
                 if (loading) return <Loading />
                 if (error) return <Error error={error} />
 
-                const { article, title, date, translations } = data.article
+                const { article, title, date, translations, link } = data.article
               
             return (
               <>
@@ -114,24 +118,22 @@ class Article extends React.Component {
                   Alert.alert('Modal has been closed.');
                 }}>
                 <Container style={{backgroundColor:'#F4F3EF'}}>
-                <ScrollView>
-                  <View style={{marginTop:50}}>
-                  <Text style={{display: 'flex', fontSize:24, margin: 20}}>Translations</Text>
-                    
-                    {translations.map((t,i) => 
-                    <View key={i} style={{margin: 20}}>
-                      <Text style={{fontSize:22,color:'green'}}>{t.orig_text}</Text> 
-                      <Text style={{fontSize:22,color:'blue'}}>{t.trans_text}</Text>
+                  <ScrollView>
+                    <View style={{marginTop:50}}>
+                      <Text style={{display: 'flex', fontSize:24, margin: 20}}>Translations</Text>
+                        {translations.map((t,i) => 
+                          <View key={i} style={{margin: 20}}>
+                            <Text style={{fontSize:22,color:'green'}}>{t.orig_text}</Text> 
+                            <Text style={{fontSize:22,color:'blue'}}>{t.trans_text}</Text>
+                          </View>
+                        )}
                     </View>
-                      )}
-                  </View>
                   </ScrollView>
                   <View style={{height:60}}>
-                  <Button style={{marginLeft:20,marginRight:20}} onPress={() => this.setState({modalVisible:false})}>
-                    <Text>Close</Text>
-                  </Button>
-                </View>
-                
+                    <Button style={{marginLeft:20,marginRight:20}} onPress={() => this.setState({modalVisible:false})}>
+                      <Text>Close</Text>
+                    </Button>
+                  </View>
                 </Container>
               </Modal>
 
@@ -142,12 +144,12 @@ class Article extends React.Component {
                 </Text>
               </View>
 
-              <View>
-                
-                <Text style={{fontSize:16,marginBottom:10,color:'#3A7891'}}>
-                  {title}
-                </Text>
-                  
+              <View> 
+                <TouchableOpacity onPress={() => this.openURL(link)}>
+                  <Text style={{fontSize:16,marginBottom:10,color:'#3A7891'}}>
+                    {title}
+                  </Text>   
+                </TouchableOpacity>
               </View>
 
               <View style={{height:60}}>
@@ -158,9 +160,9 @@ class Article extends React.Component {
 
                     <Row>
                       <Col size={20}>
-                      <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
-                        <Flag id={flaglang} size={0.2} /> 
-                      </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
+                          <Flag id={flaglang} size={0.2} /> 
+                        </TouchableOpacity>
                       </Col>
                       <Col size={80}>
                         <Text style={{fontSize:14, color:'green'}}>Select word to translate.</Text> 
@@ -173,45 +175,43 @@ class Article extends React.Component {
                 <Grid>
                   <Row>
                     <Col size={20}>
-                    <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
-                      <Flag id={flaglang} size={0.3} /> 
-                    </TouchableOpacity>
+                      <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
+                        <Flag id={flaglang} size={0.3} /> 
+                      </TouchableOpacity>
                     </Col>
                     <Col size={80}>
-                    <Text style={{fontSize:14,color:'green'}}>{selText}</Text>
+                      <Text style={{fontSize:14,color:'green'}}>{selText}</Text>
                     
-                    <Mutation
-                      mutation={TRANSLATION_MUTATION}
-                      variables={{ 
-                        originalText: selText,
-                        artId: art_id,
-                        lang
-                      }}
-                      onCompleted={data => this._confirm(data)}
-                      onError={error => this._error (error)}
-                      refetchQueries={() => { return [{
-                        query: ARTICLE_QUERY,
-                        variables: { artId: art_id, lang }}]
-                      }}
-                    >
-                    {mutation => (
-                      <View style={{width:100}}>
-                        <Button small style={{backgroundColor:'blue'}} onPress={mutation}>
-                          <Text>Translate</Text>
-                        </Button>
-                      </View>
-                      )}
-                    </Mutation>
+                      <Mutation
+                        mutation={TRANSLATION_MUTATION}
+                        variables={{ 
+                          originalText: selText,
+                          artId: art_id,
+                          lang
+                        }}
+                        onCompleted={data => this._confirm(data)}
+                        onError={error => this._error (error)}
+                        refetchQueries={() => { return [{
+                          query: ARTICLE_QUERY,
+                          variables: { artId: art_id, lang }}]
+                        }}
+                      >
+                      {mutation => (
+                        <View style={{width:100}}>
+                          <Button small style={{backgroundColor:'blue'}} onPress={mutation}>
+                            <Text>Translate</Text>
+                          </Button>
+                        </View>
+                        )}
+                      </Mutation>
                     
                     </Col>
                   </Row>
                 </Grid>
-                
                 }
 
               {orig_text.length>0 && 
                 <Grid>
-
                   <Row>
                     <Col size={20}>
                     <TouchableOpacity onPress={() => navigation.navigate('LangDashboard',{ lang, language })}>
@@ -223,10 +223,8 @@ class Article extends React.Component {
                        <Text style={{fontSize:14, color:'green'}}>{orig_text}</Text> 
                        <Text style={{fontSize:14, color:'blue'}}>{trans_text}</Text>
                     </Col>
-
                   </Row>
                 </Grid>
-
               }
                  
                 {errorMsg.length>0 && <Text style={{fontSize:22, color:'red'}}>{errorMsg}</Text>} 
@@ -234,49 +232,39 @@ class Article extends React.Component {
               </View>
 
               <ScrollView>
-
-              <SelectableText
-                selectable={true}
-                menuItems={["Select"]}
-                onSelection={({ eventType, content, selectionStart, selectionEnd }) => {
-                  this.setState({selText:content,orig_text:'',trans_text:''})
-                }}
-                style={{fontSize:22}}
-                value={article}
-              />
-             
-                          
+                <SelectableText
+                  selectable={true}
+                  menuItems={["Select"]}
+                  onSelection={({ eventType, content, selectionStart, selectionEnd }) => {
+                    this.setState({selText:content,orig_text:'',trans_text:''})
+                  }}
+                  style={{fontSize:22}}
+                  value={article}
+                />        
               </ScrollView>
 
               <Grid style={{margin:10}}>
-        
-              <Row>
-              <Col>
-              
-              <Button style={{backgroundColor:'#28a745',marginRight:10}}  onPress={() =>  navigation.navigate('PlayListPlay1',{ art_id, lang })} >
-                <Icon type="FontAwesome" name="play" /><Text>Play</Text>
-              </Button>
-               
-              </Col>
+                <Row>
+                  <Col>
+                    <Button style={{backgroundColor:'#28a745',marginRight:10}}  onPress={() =>  navigation.navigate('PlayListPlay1',{ art_id, lang })} >
+                      <Icon type="FontAwesome" name="play" /><Text>Play</Text>
+                    </Button>
+                  </Col>
 
-                <Col>
-                <Button onPress={() => this.setState({modalVisible:true})}  >
-                  <Icon type="FontAwesome" name="language" /><Text style={{fontSize:14}}>Translations</Text>
-                </Button>
-                </Col>
+                  <Col>
+                    <Button onPress={() => this.setState({modalVisible:true})}  >
+                      <Icon type="FontAwesome" name="language" /><Text style={{fontSize:14}}>Translations</Text>
+                    </Button>
+                  </Col>
                 </Row>
-              
               </Grid>
-              </Container>
-              </>
-              )
-            }}
-         </Query>
-  
-      
+            </Container>
+            </>
+            )
+          }}
+        </Query>
       </View>
     )
-
   }
 
   _confirm = data => {
@@ -294,8 +282,6 @@ class Article extends React.Component {
         type: "danger"
     })
   }
-
-  
 
 }
 

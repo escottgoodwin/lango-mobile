@@ -1,7 +1,6 @@
 import React from 'react'
-import { StyleSheet, View, ScrollView, FlatList } from 'react-native'
+import { View, ScrollView, FlatList } from 'react-native'
 import { Text, Button } from 'native-base';
-import { container } from '../css'
 import { langSwitch } from '../utils'
 
 import { Query } from "react-apollo"
@@ -11,16 +10,11 @@ import ArtRecPlaylistLang from '../components/ArtRecPlaylistLang'
 import Loading from './Loading'
 import Error from './Error'
 
-class PlaylistLang extends React.Component {
+const PlaylistLang = ({navigation}) =>  {
 
-  static navigationOptions = {
-    title: 'Playlist'
-  }
-
- render() {
-  const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const { language, flag_lang } = langSwitch(lang)
+
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       <ScrollView>
@@ -53,7 +47,7 @@ class PlaylistLang extends React.Component {
                 data={playListLang}
                 renderItem={
                   ({ item }) => (
-                    <ArtRecPlaylistLang {...item} props={this.props}/>
+                    <ArtRecPlaylistLang {...item} navigation={navigation}/>
                   )
                 }
                 keyExtractor={item => item.art_id}
@@ -76,11 +70,8 @@ class PlaylistLang extends React.Component {
 
   }
 
+PlaylistLang.navigationOptions = {
+  title: 'Playlist'
 }
-
-
-const styles = StyleSheet.create({
-  container
-})
 
 export default PlaylistLang

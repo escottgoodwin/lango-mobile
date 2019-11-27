@@ -1,7 +1,6 @@
 import React from 'react'
-import { StyleSheet, View, ScrollView, FlatList } from 'react-native'
+import { View, ScrollView, FlatList } from 'react-native'
 import { Text, Button } from 'native-base';
-import { container } from '../css'
 
 import { Query } from "react-apollo"
 import  { PLAYLIST_QUERY } from '../ApolloQueries'
@@ -10,14 +9,7 @@ import ArtRecPlaylist from '../components/ArtRecPlaylist'
 import Loading from './Loading'
 import Error from './Error'
 
-class PlaylistRecommendations extends React.Component {
-
-  static navigationOptions = {
-    title: 'Playlist',
-  }
-
- render() {
-  const { navigation } = this.props
+const PlaylistRecommendations = ({navigation}) => {
 
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
@@ -50,7 +42,7 @@ class PlaylistRecommendations extends React.Component {
                 data={playList}
                 renderItem={
                   ({ item }) => (
-                    <ArtRecPlaylist {...item} props={this.props}/>
+                    <ArtRecPlaylist {...item} navigation={navigation}/>
                   )
                 }
                 keyExtractor={item => item.art_id}
@@ -73,10 +65,9 @@ class PlaylistRecommendations extends React.Component {
     )
 
   }
-}
 
-const styles = StyleSheet.create({
-  container
-})
+PlaylistRecommendations.navigationOptions = {
+  title: 'Playlist',
+}
 
 export default PlaylistRecommendations

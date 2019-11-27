@@ -1,7 +1,6 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native'
+import { Text, View, ScrollView, FlatList, TouchableOpacity } from 'react-native'
 import { Col, Row, Grid } from 'react-native-easy-grid'
-import { container } from '../css'
 import { Flag } from 'react-native-svg-flagkit'
 import moment from 'moment'
 import { langSwitch, sortDate } from '../utils'
@@ -13,18 +12,13 @@ import ArtRecHistory from '../components/ArtRecHistory'
 import Loading from './Loading'
 import Error from './Error'
 
-class HistoryRecommendations extends React.Component {
+const HistoryRecommendations = ({navigation}) =>  {
 
-  static navigationOptions = {
-    title: 'History Recommendations'
-  }
-
- render() {
-  const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
   const date = navigation.getParam('date', 'NO-ID')
   const { language, flag_lang } = langSwitch(lang)
   const flaglang = flag_lang.toUpperCase()
+  
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       <ScrollView>
@@ -72,7 +66,7 @@ class HistoryRecommendations extends React.Component {
                 data={artRecsSorted}
                 renderItem={
                   ({ item }) => (
-                    <ArtRecHistory {...item} searchDate={date} props={this.props}/>
+                    <ArtRecHistory {...item} searchDate={date} navigation={navigation}/>
                   )
                 }
                 keyExtractor={item => item.art_id}
@@ -88,11 +82,8 @@ class HistoryRecommendations extends React.Component {
 
   }
 
+HistoryRecommendations.navigationOptions = {
+  title: 'History Recommendations'
 }
-
-
-const styles = StyleSheet.create({
-  container
-})
 
 export default HistoryRecommendations

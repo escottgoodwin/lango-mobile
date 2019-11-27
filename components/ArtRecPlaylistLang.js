@@ -7,7 +7,7 @@ import moment from 'moment'
 import { Mutation } from "react-apollo"
 import  { REMOVE_PLAYLIST_MUTATION, PLAYLIST_LANG_QUERY } from '../ApolloQueries'
 
-const ArtRecPlaylistLang = ({art_id, lang, date, title, props}) => {
+const ArtRecPlaylistLang = ({art_id, lang, date, title, navigation}) => {
     return(
         <>
         <Row>
@@ -17,8 +17,8 @@ const ArtRecPlaylistLang = ({art_id, lang, date, title, props}) => {
                 <Mutation
                     mutation={REMOVE_PLAYLIST_MUTATION}
                     variables={{ art_id }}
-                    onError={error => this._error(error)}
-                    onCompleted={data => this._confirm(data.removeFromPlaylist.message)}
+                    onError={error => _error(error)}
+                    onCompleted={data => _confirm(data.removeFromPlaylist.message)}
                     refetchQueries={() => {
                         return [{
                         query: PLAYLIST_LANG_QUERY,
@@ -40,7 +40,7 @@ const ArtRecPlaylistLang = ({art_id, lang, date, title, props}) => {
 
             <Col size={85}>
 
-            <TouchableOpacity style={{marginLeft:5}} onPress={() => props.navigation.navigate('Article',{ art_id, lang })}>
+            <TouchableOpacity style={{marginLeft:5}} onPress={() => navigation.navigate('Article',{ art_id, lang })}>
             <Text style={{fontSize:12,marginBottom:3}} >
                 {moment(date).format('MMMM Do YYYY')} 
             </Text>

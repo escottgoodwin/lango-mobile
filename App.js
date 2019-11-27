@@ -27,7 +27,7 @@ import PlayListPlay from './screens/PlayListPlay'
 import PlayListPlay1 from './screens/PlayListPlay1'
 import HistoryRecommendations from './screens/HistoryRecommendations'
 import PlaylistRecommendations from './screens/PlaylistRecommendations'
-import ChooseHistory from './screens/ChooseHistory'
+import ChooseHistory from './screens/ChooseHistory1'
 
 const uri = 'https://us-central1-langolearn.cloudfunctions.net/api'
 

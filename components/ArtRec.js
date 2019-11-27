@@ -7,7 +7,7 @@ import { Button, Toast } from 'native-base';
 import { Mutation } from "react-apollo"
 import  { ADD_PLAYLIST_MUTATION, REMOVE_PLAYLIST_MUTATION, ARTICLE_REC_ALL_QUERY } from '../ApolloQueries'
 
-const ArtRec = ({art_id, lang, date, title, playlist, props}) => {
+const ArtRec = ({art_id, lang, date, title, playlist, navigation}) => {
     return(
     <>
     <Row>
@@ -19,8 +19,8 @@ const ArtRec = ({art_id, lang, date, title, playlist, props}) => {
             <Mutation
             mutation={REMOVE_PLAYLIST_MUTATION}
             variables={{ art_id }}
-            onError={error => this._error (error)}
-            onCompleted={data => this._confirm(data.removeFromPlaylist.message)}
+            onError={error => _error (error)}
+            onCompleted={data => _confirm(data.removeFromPlaylist.message)}
             refetchQueries={() => {
                 return [{
                 query: ARTICLE_REC_ALL_QUERY,
@@ -42,8 +42,8 @@ const ArtRec = ({art_id, lang, date, title, playlist, props}) => {
             <Mutation
             mutation={ADD_PLAYLIST_MUTATION}
             variables={{ art_id }}
-            onError={error => this._error (error)}
-            onCompleted={data => this._confirm(data.addToPlaylist.message)}
+            onError={error => _error (error)}
+            onCompleted={data => _confirm(data.addToPlaylist.message)}
             refetchQueries={() => {
                 return [{
                 query: ARTICLE_REC_ALL_QUERY,
@@ -65,7 +65,7 @@ const ArtRec = ({art_id, lang, date, title, playlist, props}) => {
 
         <Col size={85}>
 
-        <TouchableOpacity style={{marginLeft:5}} onPress={() => props.navigation.navigate('Article',{ art_id, lang })}>
+        <TouchableOpacity style={{marginLeft:5}} onPress={() => navigation.navigate('Article',{ art_id, lang })}>
             <Text style={{fontSize:12,marginBottom:3}} >
                 {moment(date).format('MMMM Do YYYY')}
             </Text>

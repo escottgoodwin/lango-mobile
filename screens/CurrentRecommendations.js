@@ -1,45 +1,29 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView,  FlatList, TouchableOpacity } from 'react-native'
-import { container } from '../css'
+import { Text, View, ScrollView,  FlatList, TouchableOpacity } from 'react-native'
 import { Flag } from 'react-native-svg-flagkit'
-import ArtRec from '../components/ArtRec'
 import { Col, Row, Grid } from 'react-native-easy-grid'
 import { langSwitch, sortDate } from '../utils'
 
 import { Query } from "react-apollo"
 import  { ARTICLE_REC_ALL_QUERY } from '../ApolloQueries'
 
+import ArtRec from '../components/ArtRec'
 import Loading from './Loading'
 import Error from './Error'
 
-class CurrentRecommendations extends React.Component {
+const CurrentRecommendations = ({navigation}) => {
 
-    state = {
-      user: '',
-      date:null,
-      graphQLError: '',
-      isVisibleGraph:false,
-      networkError:'',
-      isVisibleNet:false,
-    }
-
-  static navigationOptions = {
-    title: 'Current Recommendations'
-  }
-
- render() {
-  const { navigation } = this.props
   const lang = navigation.getParam('lang', 'NO-ID')
-  const { date, graphQLError, networkError, isVisibleNet, isVisibleGraph } = this.state
   const { language, flag_lang } = langSwitch(lang)
   const flaglang = flag_lang.toUpperCase()
+
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
       <ScrollView>
 
         <Query  query={ARTICLE_REC_ALL_QUERY}
               fetchPolicy={'cache-and-network'}
-              variables={{ lang, date }}  >
+              variables={{ lang }}  >
             {({ loading, error, data }) => {
               if (loading) return <Loading />
               if (error) return <Error error={error} />
@@ -92,20 +76,8 @@ class CurrentRecommendations extends React.Component {
 
   }
 
-  _error = async error => {
-
-      const gerrorMessage = error.graphQLErrors.map((err,i) => err.message)
-      this.setState({ isVisibleGraph: true, graphQLError: gerrorMessage})
-
-      error.networkError &&
-        this.setState({ isVisibleNet: true, networkError: error.networkError.message})
-
-  }
+CurrentRecommendations.navigationOptions = {
+  title: 'Current Recommendations'
 }
-
-
-const styles = StyleSheet.create({
-  container
-})
 
 export default CurrentRecommendations

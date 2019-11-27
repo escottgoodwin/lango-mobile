@@ -9,14 +9,7 @@ import VocabTest from '../components/VocabTest'
 import Loading from './Loading'
 import Error from './Error'
 
-class VocabQuiz extends React.Component {
-
-  static navigationOptions = {
-    title: 'Vocabulary Quiz'
-  }
-
-  render(){
-    const { navigation } = this.props
+const VocabQuiz = ({navigation}) =>  {
 
   return (
       <View style={{flex:1,backgroundColor:'#F4F3EF',padding:'5%'}}>
@@ -55,6 +48,8 @@ class VocabQuiz extends React.Component {
     )
   }
 
-  }
+VocabQuiz.navigationOptions = {
+  title: 'Vocabulary Quiz'
+}
 
 export default VocabQuiz

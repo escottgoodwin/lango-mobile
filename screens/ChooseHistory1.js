@@ -1,36 +1,19 @@
-import React from 'react'
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage';
-import { container } from '../css'
+import React, { useState } from 'react'
+import { View, ScrollView, TouchableOpacity } from 'react-native'
 import {  Text, Button} from 'native-base';
 import DatePicker from 'react-native-datepicker'
 import { Flag } from 'react-native-svg-flagkit'
 import { langSwitch } from '../utils'
 
-class ChooseHistory extends React.Component {
+const ChooseHistory = ({navigation}) => {
 
-    state = {
-      user: '',
-      date: new Date()
-    }
+    const currDate = new Date()
+    const [ date, setDate ] = useState(currDate)
 
-  static navigationOptions = {
-    title: 'Recommendations Date'
-  }
-
-  componentDidMount = async () => {
-    const user1 = await AsyncStorage.getItem('user')
-    const user = JSON.parse(user1)
-    this.setState({user})
-  }
-
- render() {
-  const { navigation } = this.props
-  const { user, date } = this.state
-  const lang = navigation.getParam('lang', 'NO-ID')
-  const language = navigation.getParam('language', 'NO-ID')
-  const { flag_lang } = langSwitch(lang)
-  const flaglang = flag_lang.toUpperCase()
+    const lang = navigation.getParam('lang', 'NO-ID')
+    const language = navigation.getParam('language', 'NO-ID')
+    const { flag_lang } = langSwitch(lang)
+    const flaglang = flag_lang.toUpperCase()
 
     return (
       <>
@@ -41,12 +24,6 @@ class ChooseHistory extends React.Component {
         padding:'5%'}}>
       
         <>       
-        <View>
-          <Text>
-            Welcome {user.name}
-          </Text>
-        </View>
-
         <View>
           <Text>
             {language}
@@ -83,7 +60,7 @@ class ChooseHistory extends React.Component {
             marginLeft: 36
           }
         }}
-        onDateChange={(date) => {this.setState({date: date})}}
+        onDateChange={(date) => setDate(date)}
       />
         </View>
         </ScrollView>
@@ -101,11 +78,8 @@ class ChooseHistory extends React.Component {
 
   }
 
+ChooseHistory.navigationOptions = {
+  title: 'Recommendations History'
 }
-
-
-const styles = StyleSheet.create({
-  container
-})
 
 export default ChooseHistory
