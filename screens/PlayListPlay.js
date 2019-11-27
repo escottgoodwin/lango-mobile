@@ -1,6 +1,4 @@
 import React from 'react'
-import { Text, View, ScrollView } from 'react-native'
-import { Col, Row, Grid } from 'react-native-easy-grid'
 
 import { Query} from "react-apollo"
 import  { ARTICLE_QUERY } from '../ApolloQueries'
@@ -9,12 +7,26 @@ import PlayArticle from '../components/PlayArticle'
 import Loading from './Loading'
 import Error from './Error'
 
+const removeFromPlaylist = async (art_id) => {
+
+  await axios({
+    url: 'https://us-central1-langolearn.cloudfunctions.net/api',
+    method: 'post',
+    headers: { 'Authorization': token },
+    data: {
+        query: REMOVE_PLAYLIST_MUTATION,
+        variables: { art_id }
+    }
+  })
+}
+
 const PlayListPlay = ({navigation}) => {
 
   const playList = navigation.getParam('playList', 'NO-ID')
   const { art_id, lang } = playList[0]
 
   nextArticle = () => {
+    removeFromPlaylist(art_id)
     playList.shift()
     navigation.navigate('PlayListPlay',{ playList })
   }
