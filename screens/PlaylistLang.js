@@ -37,11 +37,19 @@ const PlaylistLang = ({navigation}) =>  {
                 </Text>
               </View>
 
-              <View style={{padding:15}}>
-                <Button block success onPress={() => navigation.navigate('PlayListPlay',{ playList: playListLang })}  >
-                  <Text>Play</Text>
-                </Button>
-              </View>
+              {
+                playListLang.length>0 ?
+                  <View style={{padding:15}}>
+                    <Button block success onPress={() => navigation.navigate('PlayListPlay',{ playList: playListLang })}  >
+                      <Text>Play</Text>
+                    </Button>
+                  </View>
+                  :
+                  <View style={{padding:15}}>
+                    <Text>Add Articles to Your Playlist</Text>
+                  </View>
+
+              }
 
               <FlatList
                 data={playListLang}

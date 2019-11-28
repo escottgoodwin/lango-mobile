@@ -8,7 +8,7 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
 import { voicify, splitSentence } from '../utils'
 
-import { TRANSLATE_SENTENCE_MUTATION } from '../ApolloQueries'
+import { TRANSLATE_SENTENCE_MUTATION, REMOVE_PLAYLIST_MUTATION } from '../ApolloQueries'
 
 class PlayArticle extends Component{
 
@@ -34,7 +34,7 @@ class PlayArticle extends Component{
   componentDidMount = async () => {
     const token = await AsyncStorage.getItem('auth_token')
   
-    const { article, lang } = this.props
+    const { article, lang, art_id } = this.props
     this.setState({currSentIdx:0, token})
     const voiceLang = voicify(lang)
     
@@ -52,6 +52,20 @@ class PlayArticle extends Component{
     Tts.addEventListener('tts-start', (event) => this.setState({playing:true}));
     Tts.addEventListener('tts-finish', (event) => this.finishSpeaking(sents));
     Tts.addEventListener('tts-cancel', (event) => this.setState({playing:false}));
+  }
+
+  removeFromPlaylist = async () => {
+    const { token } = this.state
+    const { art_id } = this.props
+    await axios({
+      url: 'https://us-central1-langolearn.cloudfunctions.net/api',
+      method: 'post',
+      headers: { 'Authorization': token },
+      data: {
+          query: REMOVE_PLAYLIST_MUTATION,
+          variables: { art_id }
+      }
+    })
   }
 
   finishSpeaking = sents => { 
@@ -73,6 +87,7 @@ class PlayArticle extends Component{
 
     if (newIdx === sents.length){
       this.setState({currSentIdx:0})
+      this.removeFromPlaylist()
       this.props.nextArticle()
 
     } else {

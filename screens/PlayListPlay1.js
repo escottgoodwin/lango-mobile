@@ -12,7 +12,7 @@ const PlayListPlay1  = ({navigation}) => {
   const art_id = navigation.getParam('art_id', 'NO-ID')
   const lang = navigation.getParam('lang', 'NO-ID')
 
-  nextArticle = () => {
+  backToArticle = () => {
     navigation.navigate('Article',{ art_id })
   }
 
@@ -26,7 +26,7 @@ const PlayListPlay1  = ({navigation}) => {
               const { article } = data
           return (
             
-            <PlayArticle nextArticle={nextArticle} lang={lang} {...article} navigation={navigation} />
+            <PlayArticle nextArticle={backToArticle} lang={lang} {...article} navigation={navigation} />
 
           )
         }}
